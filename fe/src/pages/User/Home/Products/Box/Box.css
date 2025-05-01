@@ -1,0 +1,72 @@
+.product-box {
+  background: var(--bg-color);
+  padding: 20px;
+  border-radius: 1.7rem;
+  position: relative;
+}
+
+.product-box span {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: var(--main-color);
+  color: var(--bg-color);
+  font-size: 0.88rem;
+  padding: 4px 10px;
+  border-radius: 2rem;
+  border: 4px solid var(--second-color);
+  z-index: 2;
+}
+
+.product-box img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+}
+
+.product-box h2 {
+  font-size: 1.075rem;
+  font-weight: 600;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  color: var(--yellow-color);
+  margin: 10px 0;
+}
+
+.p-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.price p {
+  color: #b2b4c2;
+  font-size: 0.94rem;
+  text-decoration: line-through;
+  margin-bottom: 5px;
+}
+
+.price h3 {
+  color: var(--main-color);
+}
+
+.product-box a i {
+  background: var(--text-neutral-3);
+  color: var(--text-color);
+  padding: 8px;
+  border-radius: 50%;
+  font-size: 20px;
+  transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.product-box a i:hover {
+  background: var(--main-color);
+  color: var(--bg-color);
+  transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}

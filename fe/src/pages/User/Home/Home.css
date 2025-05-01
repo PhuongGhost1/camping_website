@@ -1,0 +1,133 @@
+.container {
+  max-width: 1070px;
+  width: 100%;
+  margin: auto;
+}
+
+@media (max-width: 1080px) {
+  .container {
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  .product-content {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 40px;
+  }
+}
+
+@media (max-width: 920px) {
+  section {
+    padding: 2rem 0;
+  }
+  .product-content,
+  .tips-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .links {
+    display: flex;
+    flex-direction: column;
+    transform: translateX(50%);
+  }
+  .link-box {
+    padding: 1rem;
+  }
+  .footer-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-center {
+    transform: translateY(50%);
+  }
+}
+
+@media (max-width: 795px) {
+  header {
+    top: 15px;
+  }
+  .menu-icon {
+    display: flex;
+  }
+  .login-btn {
+    display: none;
+  }
+  .navbar {
+    position: absolute;
+    top: 110%;
+    left: 50%;
+    transform: translate(-50%);
+    width: 90vw;
+    background: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    border-radius: 1rem;
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    transition: 0.5s all cubic-bezier(0.075, 0.82, 0.165, 1);
+  }
+  .open-navbar {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transition: 0.5s all cubic-bezier(0.075, 0.82, 0.165, 1);
+  }
+  .nav-link {
+    display: block;
+    margin: 1rem 0;
+  }
+  .mobile-login {
+    display: initial;
+  }
+}
+
+@media (max-width: 685px) {
+  .product-content {
+    padding: 20px;
+  }
+  .backpack {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .backpack-content {
+    order: 2;
+  }
+  .backpack-content h2 {
+    font-size: 2rem;
+  }
+  .backpack-grid {
+    width: 50px;
+    height: -20px;
+    left: 12px;
+  }
+}
+
+@media (max-width: 605px) {
+  .product-content,
+  .tips-content,
+  .footer-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .single-post {
+    height: 380px;
+  }
+  .footer-center {
+    order: 3;
+    padding-bottom: 20px;
+  }
+  .links {
+    transform: translateX(0);
+  }
+}
+@media (max-width: 400px) {
+  .logo img {
+    width: 100px;
+  }
+  .category-content {
+    margin-top: 2rem;
+  }
+  .selling-heading h2,
+  .heading {
+    font-size: 1.2rem;
+  }
+  .footer-center {
+    padding-bottom: 20px;
+  }
+}

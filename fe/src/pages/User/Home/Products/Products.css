@@ -1,0 +1,16 @@
+.product-desc {
+  max-width: 80%;
+  width: 100%;
+  text-align: center;
+  margin: auto auto 2rem auto;
+}
+
+.product-content {
+  display: grid;
+  grid-template-columns: repeat(3, 250px);
+  justify-content: space-between;
+  gap: 2rem;
+  background: var(--second-color);
+  border-radius: 1.7rem;
+  padding: 40px 60px;
+}

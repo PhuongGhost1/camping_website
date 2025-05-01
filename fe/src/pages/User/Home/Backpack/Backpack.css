@@ -1,0 +1,45 @@
+.backpack {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.backpack-content {
+  position: relative;
+  padding: 40px;
+}
+
+.backpack-grid {
+  width: 70px;
+  position: absolute;
+  top: -30px;
+  left: -10px;
+  z-index: -1;
+}
+
+.backpack-content h2 {
+  font-size: 2.4rem;
+}
+
+.backpack-content h2 span {
+  color: var(--main-color);
+  text-transform: uppercase;
+  position: relative;
+}
+
+.backpack-content h2 span::after {
+  content: "";
+  width: 100%;
+  height: 16px;
+  background: var(--second-color);
+  border-radius: 10px;
+  z-index: -1;
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+}
+
+.backpack-content p {
+  margin: 1rem 0 2rem;
+}
