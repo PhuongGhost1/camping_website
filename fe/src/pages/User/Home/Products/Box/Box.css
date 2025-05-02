@@ -22,9 +22,22 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   object-fit: contain;
+  transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(0deg)
+    rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+  transform-style: preserve-3d;
+  transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+  padding-bottom: 15px;
+}
+
+.product-box img:hover {
+  transform: translate3d(0px, 0px, 0px) scale3d(1.1, 1.1, 1.1) rotateX(0deg)
+    rotateY(0deg) rotateZ(0deg) skew(0deg, 0deg);
+  transform-style: preserve-3d;
+  transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+  cursor: pointer;
 }
 
 .product-box h2 {
@@ -63,10 +76,52 @@
   border-radius: 50%;
   font-size: 20px;
   transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  cursor: pointer;
 }
 
 .product-box a i:hover {
   background: var(--main-color);
   color: var(--bg-color);
   transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.product-box button {
+  background: var(--main-color);
+  color: var(--bg-color);
+  padding: 10px 20px;
+  margin-top: 1.2rem;
+  border-radius: 2rem;
+  font-size: 0.94rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  width: 100%;
+  text-transform: uppercase;
+}
+
+.product-box button:hover {
+  opacity: 0.8;
+  transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@media (max-width: 920px) {
+  section {
+    padding: 2rem 0;
+  }
+  .product-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 605px) {
+  .product-content {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (max-width: 685px) {
+  .product-content {
+    padding: 20px;
+  }
 }

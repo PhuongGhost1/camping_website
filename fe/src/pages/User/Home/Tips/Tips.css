@@ -147,3 +147,32 @@
   color: var(--bg-color);
   transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
+
+@media (max-width: 920px) {
+  section {
+    padding: 2rem 0;
+  }
+  .tips-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .links {
+    display: flex;
+    flex-direction: column;
+    transform: translateX(50%);
+  }
+  .link-box {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 605px) {
+  .tips-content {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .single-post {
+    height: 380px;
+  }
+  .links {
+    transform: translateX(0);
+  }
+}

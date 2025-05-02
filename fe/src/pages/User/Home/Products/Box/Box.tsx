@@ -9,7 +9,12 @@ interface ProductsProps {
   salePrice: string;
 }
 
-const Box = ({ product }: { product: ProductsProps }) => {
+interface BoxProps {
+  product: ProductsProps;
+  handleAddToCart: (product: ProductsProps) => void;
+}
+
+const Box = ({ product, handleAddToCart }: BoxProps) => {
   const { discount, image: img, title, rating, price, salePrice } = product;
   return (
     <div className="product-box">
@@ -25,10 +30,11 @@ const Box = ({ product }: { product: ProductsProps }) => {
           <p>${price}</p>
           <h3>${salePrice}</h3>
         </div>
-        <a href="#">
+        <a onClick={() => handleAddToCart(product)}>
           <i className="ri-handbag-line"></i>
         </a>
       </div>
+      <button className="btn-details">See Details</button>
     </div>
   );
 };
