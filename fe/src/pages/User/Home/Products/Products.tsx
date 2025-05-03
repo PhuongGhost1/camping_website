@@ -14,7 +14,7 @@ interface ProductsProps {
 
 interface ProductsBoxProps {
   productBoxes: ProductsProps[];
-  onAddToCart: (item: ProductsProps) => void;
+  onAddToCart: (item: ProductsProps, numberOfQuantity: number) => void;
 }
 
 const Products = ({ productBoxes, onAddToCart }: ProductsBoxProps) => {

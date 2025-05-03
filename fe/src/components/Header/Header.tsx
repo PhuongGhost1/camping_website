@@ -1,21 +1,11 @@
 import { useEffect, useState } from "react";
 import "./Header.css";
 import img_logo from "../../assets/logo.png";
+import { SellingProductsProps } from "../../App";
 
 interface LinkProps {
   link: string;
   name: string;
-}
-
-interface SellingProductsProps {
-  discount: string;
-  image: string;
-  title: string;
-  rating: string;
-  price: string;
-  salePrice: string;
-  quantity?: number;
-  removing?: boolean;
 }
 
 interface HeaderProps {
@@ -24,6 +14,7 @@ interface HeaderProps {
   totalPriceOnCart: number;
   onRemoveFromCart: (item: SellingProductsProps) => void;
   isOpenCartWhenAdd: boolean;
+  onUpdateCartQuantity: (title: string, quantity: number) => void;
 }
 
 const header: LinkProps[] = [
@@ -55,6 +46,7 @@ const Header = ({
   totalPriceOnCart,
   onRemoveFromCart,
   isOpenCartWhenAdd,
+  onUpdateCartQuantity,
 }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenCart, setIsOpenCart] = useState(false);
@@ -122,7 +114,6 @@ const Header = ({
               <span
                 onClick={() => {
                   setIsOpenCart(false);
-                  setIsOpenCartAdded(false);
                 }}
               >
                 <i className="ri-close-line"></i>
@@ -144,8 +135,16 @@ const Header = ({
                           <p>Qty</p>
                           <input
                             type="number"
+                            min={1}
                             value={item.quantity || 1}
-                            readOnly
+                            onChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^0-9]/g,
+                                ""
+                              );
+                              const numericValue = Math.max(1, Number(value));
+                              onUpdateCartQuantity(item.title, numericValue);
+                            }}
                           />
                         </div>
                       </div>
@@ -172,7 +171,7 @@ const Header = ({
                   <a href="#" className="btn">
                     Continue to checkout
                   </a>
-                </div>{" "}
+                </div>
               </>
             ) : (
               <div className="empty-cart">

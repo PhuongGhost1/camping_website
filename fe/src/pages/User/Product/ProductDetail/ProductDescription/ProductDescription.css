@@ -1,0 +1,38 @@
+.product-description p {
+  font-size: 1.2rem;
+  color: #000;
+}
+
+.product-header-tab {
+  display: flex;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.product-header-tab .w--current {
+  font-weight: 600;
+  border-bottom: 2px solid var(--main-color);
+  transition: all 0.3s ease-in-out;
+  color: var(--main-color);
+}
+
+.product-header-tab a {
+  margin-right: 1rem;
+  color: #000;
+  font-size: 1.2rem;
+  padding-bottom: 8px;
+}
+
+.product-header-tab a:hover {
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.margin-top-small {
+  margin-top: 1rem;
+}
+
+.w-richtext p {
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}

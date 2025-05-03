@@ -13,19 +13,14 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import Box from "../Products/Box/Box";
-
-interface SellingProductsProps {
-  discount: string;
-  image: string;
-  title: string;
-  rating: string;
-  price: string;
-  salePrice: string;
-}
+import { SellingProductsProps } from "../../../../App";
 
 interface SellingProps {
   sellingProducts: SellingProductsProps[];
-  onAddToCart: (product: SellingProductsProps) => void;
+  onAddToCart: (
+    product: SellingProductsProps,
+    numberOfQuantity: number
+  ) => void;
 }
 
 const Selling = ({ sellingProducts, onAddToCart }: SellingProps) => {
