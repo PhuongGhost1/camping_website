@@ -1,8 +1,4 @@
-import { JSX } from "react";
 import "./Products.css";
-import img_product1 from "../../../../assets/product-1.png";
-import img_product2 from "../../../../assets/product-2.png";
-import img_product3 from "../../../../assets/product-3.png";
 import Box from "./Box/Box";
 
 interface ProductsProps {
@@ -12,36 +8,16 @@ interface ProductsProps {
   rating: string;
   price: string;
   salePrice: string;
+  quantity?: number;
+  removing?: boolean;
 }
 
-const products: ProductsProps[] = [
-  {
-    discount: "30%",
-    image: img_product1,
-    title: "Folding Camping Table",
-    rating: "4.5",
-    price: "150.00",
-    salePrice: "110.00",
-  },
-  {
-    discount: "30%",
-    image: img_product2,
-    title: "Sport Bottle",
-    rating: "4.5",
-    price: "300.00",
-    salePrice: "200.00",
-  },
-  {
-    discount: "30%",
-    image: img_product3,
-    title: "Camping Tent",
-    rating: "4.5",
-    price: "210.00",
-    salePrice: "180.00",
-  },
-];
+interface ProductsBoxProps {
+  productBoxes: ProductsProps[];
+  onAddToCart: (item: ProductsProps) => void;
+}
 
-function Products(): JSX.Element {
+const Products = ({ productBoxes, onAddToCart }: ProductsBoxProps) => {
   return (
     <section className="products container" id="products">
       <p className="product-desc">
@@ -54,12 +30,12 @@ function Products(): JSX.Element {
         focus on enjoying the great outdoors.
       </p>
       <div className="product-content">
-        {products.map((product: ProductsProps, index: number) => (
-          <Box key={index} product={product} />
+        {productBoxes.map((product: ProductsProps, index: number) => (
+          <Box key={index} product={product} handleAddToCart={onAddToCart} />
         ))}
       </div>
     </section>
   );
-}
+};
 
 export default Products;

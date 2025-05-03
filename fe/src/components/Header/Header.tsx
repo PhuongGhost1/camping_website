@@ -14,12 +14,16 @@ interface SellingProductsProps {
   rating: string;
   price: string;
   salePrice: string;
+  quantity?: number;
+  removing?: boolean;
 }
 
 interface HeaderProps {
   carts: SellingProductsProps[];
   quanity: number;
   totalPriceOnCart: number;
+  onRemoveFromCart: (item: SellingProductsProps) => void;
+  isOpenCartWhenAdd: boolean;
 }
 
 const header: LinkProps[] = [
@@ -45,12 +49,15 @@ const header: LinkProps[] = [
   },
 ];
 
-const Header = ({ carts, quanity, totalPriceOnCart }: HeaderProps) => {
+const Header = ({
+  carts,
+  quanity,
+  totalPriceOnCart,
+  onRemoveFromCart,
+  isOpenCartWhenAdd,
+}: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenCart, setIsOpenCart] = useState(false);
-  const [quantityOnCart, setQuantityOnCart] = useState(quanity);
-  const [cartItems, setCartItems] = useState<SellingProductsProps[]>([]);
-  const [totalPrice, setTotalPrice] = useState(totalPriceOnCart);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,13 +66,14 @@ const Header = ({ carts, quanity, totalPriceOnCart }: HeaderProps) => {
 
     window.addEventListener("scroll", handleScroll);
 
-    setCartItems(carts);
+    if (isOpenCartWhenAdd) {
+      setIsOpenCart(true);
 
-    const total = cartItems.reduce((acc, item) => {
-      return acc + Number(item.price) * quantityOnCart;
-    }, 0);
-    setTotalPrice(total);
-  }, [cartItems, quantityOnCart, totalPrice, carts]);
+      const timer = setTimeout(() => {}, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [carts, isOpenCartWhenAdd]);
 
   const handleMenuToggle = () => {
     setIsOpen(!isOpen);
@@ -106,50 +114,60 @@ const Header = ({ carts, quanity, totalPriceOnCart }: HeaderProps) => {
           </div>
           <div className="cart-icon" onClick={handleCartToggle}>
             <i className="ri-shopping-basket-line"></i>
-            <div className="basket-quantity">{quantityOnCart}</div>
+            <div className="basket-quantity">{quanity}</div>
           </div>
           <div className={"cart-dropdown" + (isOpenCart ? " open-cart" : "")}>
             <div className="header-cart">
               <p>Your Basket</p>
-              <span onClick={() => setIsOpenCart(false)}>
+              <span
+                onClick={() => {
+                  setIsOpenCart(false);
+                  setIsOpenCartAdded(false);
+                }}
+              >
                 <i className="ri-close-line"></i>
               </span>
             </div>
-            {cartItems.length > 0 ? (
+            {carts.length > 0 ? (
               <>
                 <div className="cart-list-container">
-                  {cartItems.map(
-                    (item: SellingProductsProps, index: number) => (
-                      <div key={index} className="cart-item-row">
-                        <div className="cart-item-img-wrapper">
-                          <img src={item.image} alt={item.title} />
-                          <div className="cart-item-quantity-wrapper">
-                            <p>Qty</p>
-                            <input
-                              type="number"
-                              value={quantityOnCart}
-                              onChange={(e) =>
-                                setQuantityOnCart(Number(e.target.value))
-                              }
-                              required
-                            />
-                          </div>
-                        </div>
-                        <div className="cart-item-details">
-                          <div>
-                            <h3>{item.title}</h3>
-                            <p>$ {item.price} USD</p>
-                          </div>
-                          <button className="btn-remove">Remove</button>
+                  {carts.map((item: SellingProductsProps, index: number) => (
+                    <div
+                      key={index}
+                      className={
+                        "cart-item-row" + (item.removing ? " blink-out" : "")
+                      }
+                    >
+                      <div className="cart-item-img-wrapper">
+                        <img src={item.image} alt={item.title} />
+                        <div className="cart-item-quantity-wrapper">
+                          <p>Qty</p>
+                          <input
+                            type="number"
+                            value={item.quantity || 1}
+                            readOnly
+                          />
                         </div>
                       </div>
-                    )
-                  )}
+                      <div className="cart-item-details">
+                        <div>
+                          <h3>{item.title}</h3>
+                          <p>$ {item.salePrice} USD</p>
+                        </div>
+                        <button
+                          className="btn-remove"
+                          onClick={() => onRemoveFromCart(item)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 <div className="cart-footer">
                   <div>
                     <p>SubTotal</p>
-                    <span>$ 0.00 USD</span>
+                    <span>$ {totalPriceOnCart} USD</span>
                   </div>
                   <a href="#" className="btn">
                     Continue to checkout
