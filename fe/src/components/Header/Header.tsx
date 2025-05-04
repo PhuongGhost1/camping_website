@@ -15,6 +15,7 @@ interface HeaderProps {
   onRemoveFromCart: (item: SellingProductsProps) => void;
   isOpenCartWhenAdd: boolean;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
+  cartIconRef: React.RefObject<HTMLDivElement>;
 }
 
 const header: LinkProps[] = [
@@ -47,6 +48,7 @@ const Header = ({
   onRemoveFromCart,
   isOpenCartWhenAdd,
   onUpdateCartQuantity,
+  cartIconRef,
 }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenCart, setIsOpenCart] = useState(false);
@@ -104,7 +106,11 @@ const Header = ({
             <div className="line2"></div>
             <div className="line3"></div>
           </div>
-          <div className="cart-icon" onClick={handleCartToggle}>
+          <div
+            ref={cartIconRef}
+            className="cart-icon"
+            onClick={handleCartToggle}
+          >
             <i className="ri-shopping-basket-line"></i>
             <div className="basket-quantity">{quanity}</div>
           </div>

@@ -8,16 +8,26 @@ interface AllProductsProps {
     product: SellingProductsProps,
     numberOfQuantity: number
   ) => void;
+  cartIconRef: React.RefObject<HTMLDivElement>;
 }
 
-const AllProducts = ({ products, onAddToCart }: AllProductsProps) => {
+const AllProducts = ({
+  products,
+  onAddToCart,
+  cartIconRef,
+}: AllProductsProps) => {
   return (
     <>
       <div className="all-products-container">
         <h1>All Products</h1>
         <div className="products-list grid-fit">
           {products.map((product, index) => (
-            <Box key={index} product={product} handleAddToCart={onAddToCart} />
+            <Box
+              key={index}
+              product={product}
+              handleAddToCart={onAddToCart}
+              cartIconRef={cartIconRef}
+            />
           ))}
         </div>
       </div>

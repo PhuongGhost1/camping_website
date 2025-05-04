@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SellingProductsProps } from "../../../../App";
 import ProductDescription from "./ProductDescription/ProductDescription";
 import "./ProductDetail.css";
+import { animateAddToCart } from "../../../../helper/utilities/utilities";
 
 interface ProductDetailProps {
   title: string;
@@ -10,15 +11,18 @@ interface ProductDetailProps {
     product: SellingProductsProps,
     numberOfQuantity: number
   ) => void;
+  cartIconRef?: React.RefObject<HTMLDivElement>;
 }
 
 const ProductDetail = ({
   title,
   currentProduct,
   onAddToCart,
+  cartIconRef,
 }: ProductDetailProps) => {
   const [currentQuantity, setCurrentQuantity] = useState<number>(1);
   const [isAdding, setIsAdding] = useState<boolean>(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const handleAdded = () => {
     setIsAdding(true);
@@ -26,6 +30,10 @@ const ProductDetail = ({
     setTimeout(() => {
       onAddToCart(currentProduct, currentQuantity);
       setIsAdding(false);
+
+      if (imgRef?.current && cartIconRef?.current) {
+        animateAddToCart(imgRef.current, cartIconRef.current);
+      }
     }, 1000);
   };
 
@@ -50,7 +58,11 @@ const ProductDetail = ({
               <div>{title}</div>
             </a>
           </div>
-          <img src={currentProduct.image} alt={currentProduct.title} />
+          <img
+            ref={imgRef}
+            src={currentProduct.image}
+            alt={currentProduct.title}
+          />
         </div>
         <div className="product-info">
           <h2>{currentProduct.title}</h2>

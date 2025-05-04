@@ -17,6 +17,7 @@ interface ShopProps {
     product: SellingProductsProps,
     numberOfQuantity: number
   ) => void;
+  cartIconRef: React.RefObject<HTMLDivElement>;
 }
 
 const Shop = ({
@@ -28,6 +29,7 @@ const Shop = ({
   onUpdateCartQuantity,
   products,
   onAddToCart,
+  cartIconRef,
 }: ShopProps) => {
   return (
     <>
@@ -38,9 +40,14 @@ const Shop = ({
         onRemoveFromCart={onRemoveFromCart}
         isOpenCartWhenAdd={isOpenCartWhenAdd}
         onUpdateCartQuantity={onUpdateCartQuantity}
+        cartIconRef={cartIconRef}
       />
 
-      <AllProducts products={products} onAddToCart={onAddToCart} />
+      <AllProducts
+        products={products}
+        onAddToCart={onAddToCart}
+        cartIconRef={cartIconRef}
+      />
 
       <Footer />
     </>

@@ -24,6 +24,7 @@ interface CommonProps {
   products: SellingProductsProps[];
   productBoxes: SellingProductsProps[];
   onUpdateCartQuantity: (title: string, quantity: number) => void;
+  cartIconRef: React.RefObject<HTMLDivElement>;
 }
 
 function Home({
@@ -36,6 +37,7 @@ function Home({
   products,
   productBoxes,
   onUpdateCartQuantity,
+  cartIconRef,
 }: CommonProps): JSX.Element {
   useEffect(() => {
     const animate = ScrollReveal({
@@ -73,15 +75,24 @@ function Home({
         onRemoveFromCart={onRemoveFromCart}
         isOpenCartWhenAdd={isOpenCartWhenAdd}
         onUpdateCartQuantity={onUpdateCartQuantity}
+        cartIconRef={cartIconRef}
       />
 
       <Hero />
 
-      <Products productBoxes={productBoxes} onAddToCart={onAddToCart} />
+      <Products
+        productBoxes={productBoxes}
+        onAddToCart={onAddToCart}
+        cartIconRef={cartIconRef}
+      />
 
       <Backpack />
 
-      <Selling sellingProducts={products} onAddToCart={onAddToCart} />
+      <Selling
+        sellingProducts={products}
+        onAddToCart={onAddToCart}
+        cartIconRef={cartIconRef}
+      />
 
       <Brand />
 

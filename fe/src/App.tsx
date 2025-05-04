@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/User/Home/Home";
 import Product from "./pages/User/Product/Product";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import img_selling_1 from "./assets/selling-1.png";
 import img_selling_2 from "./assets/selling-2.png";
 import img_selling_3 from "./assets/selling-3.png";
@@ -47,7 +47,7 @@ const sellingProducts: SellingProductsProps[] = [
   },
   {
     discount: "30%",
-    image: img_product_1,
+    image: img_product3,
     title: "Camping Tent",
     rating: "4.5",
     price: "300.00",
@@ -102,6 +102,7 @@ function App() {
     useState<SellingProductsProps[]>(sellingProducts);
   const [productBoxes, setProductBoxes] =
     useState<SellingProductsProps[]>(productsBox);
+  const cartIconRef = useRef<HTMLDivElement>(null);
 
   const handleUpdateCartQuantity = (title: string, quantity: number) => {
     setCarts((prev) =>
@@ -177,6 +178,7 @@ function App() {
         products={products}
         productBoxes={productBoxes}
         handleUpdateCartQuantity={handleUpdateCartQuantity}
+        cartIconRef={cartIconRef as React.RefObject<HTMLDivElement>}
       />
     </BrowserRouter>
   );
@@ -197,6 +199,7 @@ interface RouteProps {
   products: SellingProductsProps[];
   productBoxes: SellingProductsProps[];
   handleUpdateCartQuantity: (title: string, quantity: number) => void;
+  cartIconRef: React.RefObject<HTMLDivElement>;
 }
 
 function MainRoutes({
@@ -209,6 +212,7 @@ function MainRoutes({
   products,
   productBoxes,
   handleUpdateCartQuantity,
+  cartIconRef,
 }: RouteProps) {
   const location = useLocation();
   const background = location.state?.background;
@@ -227,6 +231,7 @@ function MainRoutes({
             products={products}
             productBoxes={productBoxes}
             onUpdateCartQuantity={handleUpdateCartQuantity}
+            cartIconRef={cartIconRef}
           />
         }
       />
@@ -243,6 +248,7 @@ function MainRoutes({
             products={products}
             productBoxes={productBoxes}
             onUpdateCartQuantity={handleUpdateCartQuantity}
+            cartIconRef={cartIconRef}
           />
         }
       />
@@ -259,6 +265,7 @@ function MainRoutes({
             products={products}
             productBoxes={productBoxes}
             onAddToCart={onAddToCart}
+            cartIconRef={cartIconRef}
           />
         }
       />

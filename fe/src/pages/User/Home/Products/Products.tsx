@@ -15,9 +15,14 @@ interface ProductsProps {
 interface ProductsBoxProps {
   productBoxes: ProductsProps[];
   onAddToCart: (item: ProductsProps, numberOfQuantity: number) => void;
+  cartIconRef?: React.RefObject<HTMLDivElement>;
 }
 
-const Products = ({ productBoxes, onAddToCart }: ProductsBoxProps) => {
+const Products = ({
+  productBoxes,
+  onAddToCart,
+  cartIconRef,
+}: ProductsBoxProps) => {
   return (
     <section className="products container" id="products">
       <p className="product-desc">
@@ -31,7 +36,12 @@ const Products = ({ productBoxes, onAddToCart }: ProductsBoxProps) => {
       </p>
       <div className="product-content">
         {productBoxes.map((product: ProductsProps, index: number) => (
-          <Box key={index} product={product} handleAddToCart={onAddToCart} />
+          <Box
+            key={index}
+            product={product}
+            handleAddToCart={onAddToCart}
+            cartIconRef={cartIconRef}
+          />
         ))}
       </div>
     </section>

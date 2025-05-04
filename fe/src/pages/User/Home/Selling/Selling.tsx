@@ -21,9 +21,14 @@ interface SellingProps {
     product: SellingProductsProps,
     numberOfQuantity: number
   ) => void;
+  cartIconRef?: React.RefObject<HTMLDivElement>;
 }
 
-const Selling = ({ sellingProducts, onAddToCart }: SellingProps) => {
+const Selling = ({
+  sellingProducts,
+  onAddToCart,
+  cartIconRef,
+}: SellingProps) => {
   return (
     <section className="selling container" id="selling">
       <div className="selling-heading">
@@ -64,7 +69,11 @@ const Selling = ({ sellingProducts, onAddToCart }: SellingProps) => {
       >
         {sellingProducts.map((product: SellingProductsProps, index: number) => (
           <SwiperSlide key={index}>
-            <Box product={product} handleAddToCart={onAddToCart} />
+            <Box
+              product={product}
+              handleAddToCart={onAddToCart}
+              cartIconRef={cartIconRef}
+            />
           </SwiperSlide>
         ))}
 

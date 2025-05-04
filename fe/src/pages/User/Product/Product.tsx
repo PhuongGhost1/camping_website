@@ -16,6 +16,7 @@ interface CommonProps {
     numberOfQuantity: number
   ) => void;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
+  cartIconRef: React.RefObject<HTMLDivElement>;
 }
 
 interface ProductPageProps extends CommonProps {
@@ -33,6 +34,7 @@ const Product = ({
   products,
   productBoxes,
   onUpdateCartQuantity,
+  cartIconRef,
 }: ProductPageProps) => {
   const { title } = useParams<{ title: string }>();
   const product = products.find(
@@ -55,12 +57,14 @@ const Product = ({
         onRemoveFromCart={onRemoveFromCart}
         isOpenCartWhenAdd={isOpenCartWhenAdd}
         onUpdateCartQuantity={onUpdateCartQuantity}
+        cartIconRef={cartIconRef}
       />
 
       <ProductDetail
         title={title ?? ""}
         currentProduct={currentProduct}
         onAddToCart={onAddToCart}
+        cartIconRef={cartIconRef}
       />
 
       <Footer />
