@@ -358,3 +358,23 @@ header {
 .empty-cart button:hover {
   transform: scale(1.05);
 }
+
+@media (max-width: 795px) {
+  .cart-item-details .btn-remove {
+    width: 80%;
+  }
+  .cart-item-details h3 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 605px) {
+  .cart-item-details .btn-remove {
+    width: 80%;
+  }
+  .cart-item-row {
+    margin-bottom: 0;
+    padding: 0.5rem 0;
+  }
+}

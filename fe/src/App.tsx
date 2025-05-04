@@ -10,6 +10,7 @@ import img_selling_4 from "./assets/selling-4.png";
 import img_product_1 from "./assets/product-1.png";
 import img_product2 from "./assets/product-2.png";
 import img_product3 from "./assets/product-3.png";
+import Shop from "./pages/User/Shop/Shop";
 
 const sellingProducts: SellingProductsProps[] = [
   {
@@ -242,6 +243,22 @@ function MainRoutes({
             products={products}
             productBoxes={productBoxes}
             onUpdateCartQuantity={handleUpdateCartQuantity}
+          />
+        }
+      />
+      <Route
+        path="/shop-all-products"
+        element={
+          <Shop
+            carts={carts}
+            quanity={quantity}
+            totalPriceOnCart={totalPrice}
+            onRemoveFromCart={onRemoveFromCart}
+            isOpenCartWhenAdd={isOpenCartWhenAdd}
+            onUpdateCartQuantity={handleUpdateCartQuantity}
+            products={products}
+            productBoxes={productBoxes}
+            onAddToCart={onAddToCart}
           />
         }
       />

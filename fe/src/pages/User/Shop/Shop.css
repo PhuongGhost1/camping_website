@@ -1,0 +1,23 @@
+@media (max-width: 1080px) {
+  .all-products-container h1 {
+    font-size: 1.8rem;
+    margin-left: 1.5rem;
+  }
+  .products-list {
+    padding: 0 1rem;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .all-products-container h1 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .products-list {
+    max-height: 1000px;
+    overflow-y: auto;
+  }
+}

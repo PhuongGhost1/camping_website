@@ -23,7 +23,7 @@ const header: LinkProps[] = [
     name: "Category",
   },
   {
-    link: "#products",
+    link: "/shop-all-products",
     name: "Products",
   },
   {
@@ -78,7 +78,7 @@ const Header = ({
   return (
     <header>
       <div className="nav container">
-        <a href="#" className="logo">
+        <a href="/" className="logo">
           <img src={img_logo} alt="" />
         </a>
         <div className={"navbar" + (isOpen ? " open-navbar" : "")}>

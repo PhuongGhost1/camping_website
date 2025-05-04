@@ -78,3 +78,12 @@ footer {
 .social a i:hover {
   background: var(--text-color);
 }
+
+@media (max-width: 605px) {
+  .footer-box {
+    align-items: center;
+  }
+  .footer-center {
+    margin-top: -50px;
+  }
+}
