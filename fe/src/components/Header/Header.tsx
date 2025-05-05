@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./Header.css";
 import img_logo from "../../assets/logo.png";
 import { SellingProductsProps } from "../../App";
+import Authentication from "../Authentication/Authentication";
 
 interface LinkProps {
   link: string;
@@ -20,7 +21,7 @@ interface HeaderProps {
 
 const header: LinkProps[] = [
   {
-    link: "#category",
+    link: "/category/men",
     name: "Category",
   },
   {
@@ -52,6 +53,17 @@ const Header = ({
 }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenCart, setIsOpenCart] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [type, setType] = useState("Login");
+
+  const openLogin = () => {
+    setIsLoginOpen(true);
+    setType("Login");
+  };
+
+  const closeLogin = () => {
+    setIsLoginOpen(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,6 +91,7 @@ const Header = ({
 
   return (
     <header>
+      {isLoginOpen && <Authentication closeLogin={closeLogin} type={type} />}
       <div className="nav container">
         <a href="/" className="logo">
           <img src={img_logo} alt="" />
@@ -89,15 +102,16 @@ const Header = ({
               {item.name}
             </a>
           ))}
-          <a href="#" className="login-btn mobile-login">
+          <button className="login-btn mobile-login" onClick={openLogin}>
             Login / Register
-          </a>
+          </button>
         </div>
         <div className="nav-right">
           <i className="ri-search-2-line"></i>
-          <a href="#" className="login-btn">
+          <button className="login-btn" onClick={openLogin}>
             Login / Register
-          </a>
+          </button>
+
           <div
             className={"menu-icon" + (isOpen ? " move" : "")}
             onClick={handleMenuToggle}
@@ -182,7 +196,7 @@ const Header = ({
             ) : (
               <div className="empty-cart">
                 <p>Your cart is empty</p>
-                <a href="#">
+                <a href="/shop-all-products">
                   <button>Go Shop</button>
                 </a>
               </div>

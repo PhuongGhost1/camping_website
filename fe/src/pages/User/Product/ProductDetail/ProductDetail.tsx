@@ -48,7 +48,7 @@ const ProductDetail = ({
             <div className="breadcrumb-divider w-embed">
               <i className="ri-arrow-right-s-line"></i>
             </div>
-            <a href="#">
+            <a href="/category/men">
               <div>Men</div>
             </a>
             <div className="breadcrumb-divider w-embed">

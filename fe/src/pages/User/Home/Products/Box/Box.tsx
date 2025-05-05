@@ -8,8 +8,9 @@ interface ProductsProps {
   image: string;
   title: string;
   rating: string;
-  price: string;
-  salePrice: string;
+  price: number;
+  salePrice: number;
+  category: string;
 }
 
 interface BoxProps {
@@ -50,8 +51,8 @@ const Box = ({ product, handleAddToCart, cartIconRef }: BoxProps) => {
       </div>
       <div className="p-info">
         <div className="price">
-          <p>${price}</p>
-          <h3>${salePrice}</h3>
+          <p>${price.toFixed(2)}</p>
+          <h3>${salePrice.toFixed(2)}</h3>
         </div>
         <a onClick={handleAddToCartClick}>
           <i className="ri-handbag-line"></i>

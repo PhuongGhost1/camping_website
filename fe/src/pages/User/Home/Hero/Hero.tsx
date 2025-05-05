@@ -14,7 +14,7 @@ function Hero(): JSX.Element {
           We have the <span>equipment</span> for your trip like this!
         </h2>
         <div className="hero-btn">
-          <a href="#" className="btn">
+          <a href="/shop-all-products" className="btn">
             <span>View Products</span>
             <img src={img_arrow_right} alt="" />
           </a>

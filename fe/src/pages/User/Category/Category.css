@@ -1,0 +1,118 @@
+.product-category {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 10rem 0 3rem;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.link-category {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: #000;
+}
+
+.link-category a {
+  text-decoration: none;
+  color: var(--text-neutral);
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+}
+
+.category-link.active {
+  border: 1px solid var(--main-color);
+  border-radius: 5px;
+  padding: 6px 20px;
+  background: var(--text-neutral-2);
+  transition: all 0.3s ease-in-out;
+}
+
+.sort-category {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.sort-category .btn-sort {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-category .btn-sort i {
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sort-category .btn-sort i.rotate {
+  transform: rotate(180deg);
+}
+
+.sort-category button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: var(--main-color);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.sort-category button:focus {
+  outline: none;
+}
+
+.sort-category .sort-select {
+  position: absolute;
+  top: 150%;
+  right: 0%;
+  width: 160%;
+  background: #fff;
+  z-index: 100;
+  border-radius: 5px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  padding: 0.6rem;
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.sort-category .open {
+  opacity: 1;
+}
+
+.sort-category .sort-select p {
+  margin: 0.5rem 0;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.sort-category .sort-select p strong {
+  font-weight: 700;
+  color: var(--main-color);
+}
+
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 0 2rem;
+  max-height: 800px;
+  overflow-x: auto;
+}
+
+.product-list .product-box {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
