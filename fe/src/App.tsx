@@ -12,6 +12,7 @@ import img_product2 from "./assets/product-2.png";
 import img_product3 from "./assets/product-3.png";
 import Shop from "./pages/User/Shop/Shop";
 import Category from "./pages/User/Category/Category";
+import Checkout from "./pages/User/Checkout/Checkout";
 
 const sellingProducts: SellingProductsProps[] = [
   {
@@ -122,7 +123,7 @@ export interface SellingProductsProps {
 }
 
 function App() {
-  const [carts, setCarts] = useState<SellingProductsProps[]>([]);
+  const [carts, setCarts] = useState<SellingProductsProps[]>(productsBox);
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isOpenCartWhenAdd, setIsOpenCartWhenAdd] = useState(false);
@@ -311,6 +312,18 @@ function MainRoutes({
             productBoxes={productBoxes}
             onAddToCart={onAddToCart}
             cartIconRef={cartIconRef}
+          />
+        }
+      />
+      <Route
+        path="/checkout"
+        element={
+          <Checkout
+            carts={carts}
+            quantity={quantity}
+            totalPrice={totalPrice}
+            onRemoveFromCart={onRemoveFromCart}
+            onUpdateCartQuantity={handleUpdateCartQuantity}
           />
         }
       />

@@ -188,7 +188,7 @@ const Header = ({
                     <p>SubTotal</p>
                     <span>$ {totalPriceOnCart} USD</span>
                   </div>
-                  <a href="#" className="btn">
+                  <a href="/checkout" className="btn">
                     Continue to checkout
                   </a>
                 </div>

@@ -1,0 +1,99 @@
+.checkout-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.checkout-header-summary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #f4f2ed;
+  border-radius: 0.5rem;
+  gap: 0.4rem;
+}
+
+.checkout-header-summary div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkout-header-summary div p,
+.checkout-header-summary h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--main-color);
+}
+
+.checkout-body-summary {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkout-body-summary .title {
+  font-size: 1.1rem;
+  padding: 10px 10px 10px 13px;
+  background: #f4fbf9;
+}
+
+.order-total {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 13px 10px;
+  border-radius: 0.5rem;
+  background: #f3f6f5;
+}
+
+.order-total .details {
+  display: flex;
+  padding: 0.5rem 0;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.order-total .details .tax-info {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.order-total .details:last-child {
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.read {
+  display: flex;
+  column-gap: 10px;
+}
+
+.read div {
+  align-self: flex-start;
+}
+
+.read div svg {
+  width: 1.5rem;
+}
+
+.checkout-summary button {
+  padding: 0.7rem 1rem;
+  background-color: var(--main-color);
+  color: #fff;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.checkout-summary button:hover {
+  background-color: #000;
+  color: #fff;
+  transform: scale(1.05);
+}

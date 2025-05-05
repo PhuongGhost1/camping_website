@@ -1,0 +1,26 @@
+.checkout-product img {
+  width: 200px;
+}
+
+svg {
+  width: 20px;
+}
+
+.checkout-container {
+  display: flex;
+  flex-direction: column;
+  padding: 50px 20px 20px;
+}
+
+.checkout-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  column-gap: 5px;
+}
+
+.checkout-body {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}

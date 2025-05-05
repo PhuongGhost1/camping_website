@@ -1,0 +1,163 @@
+.checkout-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkout-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--text-neutral-2);
+  padding: 10px 15px;
+  border-radius: 7px;
+}
+
+.checkout-title p {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.checkout-product {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  padding: 20px 0;
+}
+
+.checkout-product:not(:last-child) {
+  border-bottom: 1px solid var(--text-neutral);
+}
+
+.checkout-product-info {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+}
+
+.checkout-product-info img {
+  width: calc(120px / 200px * 100%);
+  max-width: 120px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.product-info-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.product-info-item h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.product-info-item button {
+  background: var(--main-color);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.product-info-item button:first-child {
+  margin-right: 5px;
+}
+
+.check-price {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  gap: 16px;
+}
+
+.price {
+  width: 100%;
+  display: flex;
+  column-gap: 5px;
+  justify-content: space-between;
+}
+
+.price h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000;
+}
+
+.price span:last-child {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-right: 10px;
+}
+
+.change-quantity {
+  display: flex;
+  align-items: center;
+  column-gap: 3px;
+}
+
+.change-quantity button {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.change-quantity input {
+  width: 50px;
+  height: 30px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.kind-transport {
+  display: flex;
+  column-gap: 20px;
+  width: 100%;
+  align-items: center;
+}
+
+.kind-transport div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: space-between;
+}
+
+.kind-transport a {
+  text-decoration: underline;
+  color: #406eb5;
+  margin-top: 5px;
+}
+
+.transport-box {
+  padding: 10px 15px;
+  border: 1px solid var(--text-neutral);
+  cursor: pointer;
+  transition: all cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
+  border-radius: 7px;
+}
+
+.transport-box.active {
+  border: 3.5px solid var(--text-neutral);
+  transition: all cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
+  border-radius: 7px;
+}
+
+.transport-box p:nth-child(2) {
+  margin: 5px 0;
+}
+
+.transport-box p:not(:nth-child(2)) {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
