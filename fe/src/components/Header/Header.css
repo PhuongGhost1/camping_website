@@ -3,7 +3,19 @@ header {
   top: 20px;
   left: 0;
   width: 100%;
-  z-index: 200;
+  z-index: 400;
+}
+
+.background {
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  top: -36%;
+  left: 0%;
+  background: rgba(48, 48, 48, 0.459);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  transition: all 0.4s ease-in-out;
+  z-index: 500;
 }
 
 .nav {
@@ -24,6 +36,7 @@ header {
   display: flex;
   align-items: center;
   column-gap: 1.5rem;
+  position: relative;
 }
 
 .nav-link {
@@ -51,6 +64,86 @@ header {
   color: var(--text-color);
   padding: 8px;
   border-radius: 50%;
+  cursor: pointer;
+}
+
+.search-wrapper {
+  position: fixed;
+  top: 7%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.search-bar {
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+  transition: all 0.4s ease-in-out;
+}
+
+.open-search {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  transition: all 0.4s ease-in-out;
+}
+
+.search-result-container {
+  position: absolute;
+  top: 100%;
+  width: 99%;
+  background: var(--bg-color);
+  border-radius: 0 0 5px 5px;
+}
+
+.search-result-list {
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  border-radius: 0 0 5px 5px;
+}
+
+.search-result-list a {
+  padding: 0.3rem 0;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 0.5rem;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  transition: all 0.4s ease-in-out;
+}
+
+.search-bar input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--main-color);
+  font-size: 1rem;
+}
+
+.search-bar input::placeholder {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.search-bar i {
+  position: absolute;
+  right: 10px;
+  color: var(--text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
 }
 
 .login-btn {

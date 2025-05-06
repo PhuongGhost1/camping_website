@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Header.css";
 import img_logo from "../../assets/logo.png";
 import { SellingProductsProps } from "../../App";
@@ -42,6 +42,14 @@ const header: LinkProps[] = [
   },
 ];
 
+const searchResult = [
+  { name: "Bottle XL" },
+  { name: "Bottle S" },
+  { name: "Bottle L" },
+  { name: "Bottle XXL" },
+  { name: "Bottle M" },
+];
+
 const Header = ({
   carts,
   quanity,
@@ -55,6 +63,10 @@ const Header = ({
   const [isOpenCart, setIsOpenCart] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [type, setType] = useState("Login");
+  const [isOpenSearch, setIsOpenSearch] = useState(false);
+  const [isOpenSearchResult, setIsOpenSearchResult] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchResults, setSearchResults] = useState(searchResult);
 
   const openLogin = () => {
     setIsLoginOpen(true);
@@ -89,9 +101,60 @@ const Header = ({
     setIsOpenCart(!isOpenCart);
   };
 
+  const handleSearchToggle = () => {
+    setIsOpenSearch(true);
+    setIsOpenSearchResult(false);
+    setSearchValue("");
+  };
+
+  const handleCloseSearch = () => {
+    setIsOpenSearch(false);
+    setIsOpenSearchResult(false);
+    setSearchValue("");
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchValue(value);
+
+    const filteredResults = searchResult.filter((item) =>
+      item.name.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setSearchResults(filteredResults);
+    setIsOpenSearchResult(filteredResults.length > 0 && value.length > 0);
+  };
+
   return (
     <header>
       {isLoginOpen && <Authentication closeLogin={closeLogin} type={type} />}
+      {isOpenSearch && (
+        <div className="background" onClick={handleCloseSearch}></div>
+      )}
+      <>
+        <div className="search-wrapper">
+          <div className={`search-bar ${isOpenSearch ? "open-search" : ""}`}>
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchValue}
+              onChange={(event) => handleInputChange(event)}
+            />
+            <i className="ri-close-line" onClick={handleCloseSearch}></i>
+          </div>
+          {isOpenSearchResult && (
+            <div className="search-result-container">
+              <div className="search-result-list">
+                {searchResults.map((item, index) => (
+                  <a href="#" key={index} className="search-result-item">
+                    {item.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </>
       <div className="nav container">
         <a href="/" className="logo">
           <img src={img_logo} alt="" />
@@ -107,7 +170,7 @@ const Header = ({
           </button>
         </div>
         <div className="nav-right">
-          <i className="ri-search-2-line"></i>
+          <i className="ri-search-2-line" onClick={handleSearchToggle}></i>
           <button className="login-btn" onClick={openLogin}>
             Login / Register
           </button>
