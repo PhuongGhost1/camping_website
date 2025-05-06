@@ -13,6 +13,10 @@ const Content: React.FC<ContentCheckOutProps> = ({
   onRemoveFromCart,
   onUpdateCartQuantity,
 }) => {
+  const [selectedOption, setSelectedOption] = useState<"pickup" | "shipping">(
+    "pickup"
+  );
+
   const totalPriceOfItem = (product: SellingProductsProps) => {
     const currentProduct = carts.find((item) => item.title === product.title);
     if (currentProduct) {
@@ -30,6 +34,10 @@ const Content: React.FC<ContentCheckOutProps> = ({
           : (currentProduct.quantity || 1) - 1;
       onUpdateCartQuantity(title, newQuantity);
     }
+  };
+
+  const handleOption = (option: "pickup" | "shipping") => {
+    setSelectedOption(option);
   };
 
   return (
@@ -80,12 +88,17 @@ const Content: React.FC<ContentCheckOutProps> = ({
                     +
                   </button>
                 </div>
-                <h3>${product.salePrice}</h3>
-                <span>${totalPriceOfItem(product)} </span>
+                <h3>${product.salePrice.toFixed(2)}</h3>
+                <span>${totalPriceOfItem(product).toFixed(2)} </span>
               </div>
               <div className="kind-transport">
                 <div>
-                  <div className="transport-box active">
+                  <div
+                    className={`transport-box ${
+                      selectedOption === "pickup" ? "active" : ""
+                    }`}
+                    onClick={() => handleOption("pickup")}
+                  >
                     <p>Pick up</p>
                     <p>at Seattle Flagship</p>
                     <p>Free & Fast</p>
@@ -93,7 +106,12 @@ const Content: React.FC<ContentCheckOutProps> = ({
                   <a href="#">Change store</a>
                 </div>
                 <div>
-                  <div className="transport-box">
+                  <div
+                    className={`transport-box ${
+                      selectedOption === "shipping" ? "active" : ""
+                    }`}
+                    onClick={() => handleOption("shipping")}
+                  >
                     <p>Ship to address</p>
                     <p>to 98109</p>
                     <p>Free</p>

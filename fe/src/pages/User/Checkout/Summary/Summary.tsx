@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Summary.css";
+import { useNavigate } from "react-router-dom";
 
 interface SummaryProps {
   totalPrice: number;
 }
 
 const Summary: React.FC<SummaryProps> = ({ totalPrice }) => {
+  const navigate = useNavigate();
+  const [isCheckout, setIsCheckout] = useState(false);
+
+  const handleCheckout = () => {
+    setIsCheckout(true);
+
+    setTimeout(() => {
+      setIsCheckout(false);
+      navigate("/");
+    }, 2000);
+  };
+
   return (
     <div className="checkout-summary">
       <div className="checkout-header-summary">
@@ -76,7 +89,22 @@ const Summary: React.FC<SummaryProps> = ({ totalPrice }) => {
           Apply coupons in the Review and Pay section at the end of checkout.
         </p>
       </div>
-      <button>Procced to checkout</button>
+      <div className={`procced-button ${isCheckout ? "disabled" : ""}`}>
+        <div>
+          <button
+            onClick={handleCheckout}
+            disabled={isCheckout}
+            className={`${isCheckout ? "disabled" : ""}`}
+          >
+            Procced to checkout
+          </button>
+          {isCheckout && <div className="loading"></div>}
+        </div>
+
+        <a href="/" className="cancel-btn">
+          Cancel
+        </a>
+      </div>
     </div>
   );
 };
