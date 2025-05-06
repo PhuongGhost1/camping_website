@@ -14,6 +14,10 @@ import Shop from "./pages/User/Shop/Shop";
 import Category from "./pages/User/Category/Category";
 import Checkout from "./pages/User/Checkout/Checkout";
 
+export interface UserProps {
+  name: string;
+}
+
 export interface CategoryProps {
   name: string;
 }

@@ -460,6 +460,13 @@ header {
   transform: scale(1.05);
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 @media (max-width: 795px) {
   .cart-item-details .btn-remove {
     width: 80%;
@@ -467,6 +474,9 @@ header {
   .cart-item-details h3 {
     font-size: 1rem;
     font-weight: 600;
+  }
+  .user-info p {
+    display: none;
   }
 }
 

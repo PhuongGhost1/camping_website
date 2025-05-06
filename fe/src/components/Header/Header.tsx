@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./Header.css";
 import img_logo from "../../assets/logo.png";
-import { SellingProductsProps } from "../../App";
+import { SellingProductsProps, UserProps } from "../../App";
 import Authentication from "../Authentication/Authentication";
+import Profile from "../Profile/Profile";
 
 interface LinkProps {
   link: string;
@@ -43,6 +44,10 @@ const header: LinkProps[] = [
   },
 ];
 
+const userData: UserProps = {
+  name: "Phuong Hoang",
+};
+
 const Header = ({
   carts,
   quanity,
@@ -63,6 +68,9 @@ const Header = ({
   const [searchResults, setSearchResults] = useState<SellingProductsProps[]>(
     []
   );
+  const isMobile = window.innerWidth <= 768;
+  const [user, setUser] = useState<UserProps | null>(null);
+  const [isOpenUserInfo, setIsOpenUserInfo] = useState(false);
 
   const openLogin = () => {
     setIsLoginOpen(true);
@@ -74,6 +82,8 @@ const Header = ({
   };
 
   useEffect(() => {
+    setUser(userData);
+
     const handleScroll = () => {
       setIsOpen(false);
     };
@@ -121,12 +131,22 @@ const Header = ({
     setIsOpenSearchResult(filteredResults.length > 0 && value.length > 0);
   };
 
+  const handleOpenUserInfo = () => {
+    setIsOpenUserInfo(!isOpenUserInfo);
+  };
+
   return (
     <header>
       {isLoginOpen && <Authentication closeLogin={closeLogin} type={type} />}
       {isOpenSearch && (
         <div className="background" onClick={handleCloseSearch}></div>
       )}
+
+      <Profile
+        user={user}
+        handleOpenUserInfo={handleOpenUserInfo}
+        isOpenUserInfo={isOpenUserInfo}
+      />
       <>
         {isOpenSearch && (
           <div className="search-wrapper">
@@ -169,15 +189,24 @@ const Header = ({
               {item.name}
             </a>
           ))}
-          <button className="login-btn mobile-login" onClick={openLogin}>
-            Login / Register
-          </button>
+          {isMobile && !user && (
+            <button className="login-btn mobile-login" onClick={openLogin}>
+              Login / Register
+            </button>
+          )}
         </div>
         <div className="nav-right">
           <i className="ri-search-2-line" onClick={handleSearchToggle}></i>
-          <button className="login-btn" onClick={openLogin}>
-            Login / Register
-          </button>
+          {user ? (
+            <div className="user-info" onClick={handleOpenUserInfo}>
+              <i className="ri-user-line"></i>
+              <p>{user.name}</p>
+            </div>
+          ) : (
+            <button className="login-btn" onClick={openLogin}>
+              Login / Register
+            </button>
+          )}
 
           <div
             className={"menu-icon" + (isOpen ? " move" : "")}
