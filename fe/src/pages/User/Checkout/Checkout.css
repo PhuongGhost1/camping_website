@@ -24,3 +24,25 @@ svg {
   grid-template-columns: 2fr 1fr;
   gap: 20px;
 }
+
+@media (max-width: 975px) {
+  .product-info-item {
+    margin-right: 0.5rem;
+  }
+  .product-info-item .button {
+    width: 100%;
+  }
+  .product-info-item .btn-save {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  .product-info-item button:nth-child(2) {
+    width: 100%;
+  }
+  .transport-box {
+    text-align: center;
+  }
+  .transport-box p {
+    font-size: 0.8rem;
+  }
+}

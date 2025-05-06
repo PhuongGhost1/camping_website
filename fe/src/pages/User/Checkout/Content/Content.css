@@ -167,3 +167,31 @@
   font-weight: 700;
   color: var(--text-color);
 }
+@media (max-width: 825px) {
+  .checkout-title p:first-child {
+    margin-right: 12rem;
+  }
+  .checkout-title p {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .checkout-product-info {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 825px) {
+  .check-price {
+    justify-content: center;
+  }
+  .product-info-item {
+    align-items: center;
+  }
+}
+
+@media (max-width: 650px) {
+  .checkout-body {
+    grid-template-columns: 1fr;
+  }
+}
