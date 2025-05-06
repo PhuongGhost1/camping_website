@@ -14,6 +14,10 @@ import Shop from "./pages/User/Shop/Shop";
 import Category from "./pages/User/Category/Category";
 import Checkout from "./pages/User/Checkout/Checkout";
 
+export interface CategoryProps {
+  name: string;
+}
+
 const sellingProducts: SellingProductsProps[] = [
   {
     discount: "30%",
@@ -22,7 +26,14 @@ const sellingProducts: SellingProductsProps[] = [
     rating: "4.5",
     price: 120.0,
     salePrice: 80.0,
-    category: "Men",
+    category: [
+      {
+        name: "Camping",
+      },
+      {
+        name: "Accessories",
+      },
+    ],
   },
   {
     discount: "30%",
@@ -31,7 +42,20 @@ const sellingProducts: SellingProductsProps[] = [
     rating: "4.5",
     price: 10.0,
     salePrice: 5.0,
-    category: "Men",
+    category: [
+      {
+        name: "Camping",
+      },
+      {
+        name: "Accessories",
+      },
+      {
+        name: "Men",
+      },
+      {
+        name: "Women",
+      },
+    ],
   },
   {
     discount: "30%",
@@ -40,16 +64,36 @@ const sellingProducts: SellingProductsProps[] = [
     rating: "4.5",
     price: 50.0,
     salePrice: 24.0,
-    category: "Women",
+    category: [
+      {
+        name: "Camping",
+      },
+      {
+        name: "Accessories",
+      },
+      {
+        name: "Men",
+      },
+      {
+        name: "Women",
+      },
+    ],
   },
   {
     discount: "30%",
     image: img_selling_4,
-    title: "Eletric Water Bottle",
+    title: "Electric Water Bottle",
     rating: "4.5",
     price: 12.29,
     salePrice: 4.59,
-    category: "Women",
+    category: [
+      {
+        name: "Camping",
+      },
+      {
+        name: "Bottle",
+      },
+    ],
   },
   {
     discount: "30%",
@@ -58,7 +102,20 @@ const sellingProducts: SellingProductsProps[] = [
     rating: "4.5",
     price: 21.12,
     salePrice: 14.99,
-    category: "Men",
+    category: [
+      {
+        name: "Camping",
+      },
+      {
+        name: "Tent",
+      },
+      {
+        name: "Men",
+      },
+      {
+        name: "Women",
+      },
+    ],
   },
   {
     discount: "30%",
@@ -67,7 +124,17 @@ const sellingProducts: SellingProductsProps[] = [
     rating: "4.5",
     price: 41.1,
     salePrice: 29.0,
-    category: "Rucksacks",
+    category: [
+      {
+        name: "Camping",
+      },
+      {
+        name: "Men",
+      },
+      {
+        name: "Women",
+      },
+    ],
   },
   {
     discount: "30%",
@@ -76,7 +143,14 @@ const sellingProducts: SellingProductsProps[] = [
     rating: "4.5",
     price: 116.0,
     salePrice: 58.0,
-    category: "Footwear",
+    category: [
+      {
+        name: "Camping",
+      },
+      {
+        name: "Bottle",
+      },
+    ],
   },
 ];
 
@@ -119,7 +193,7 @@ export interface SellingProductsProps {
   salePrice: number;
   quantity?: number;
   removing?: boolean;
-  category: string;
+  category: CategoryProps[];
 }
 
 function App() {

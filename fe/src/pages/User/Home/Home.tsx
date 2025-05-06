@@ -76,6 +76,7 @@ function Home({
         isOpenCartWhenAdd={isOpenCartWhenAdd}
         onUpdateCartQuantity={onUpdateCartQuantity}
         cartIconRef={cartIconRef}
+        sellingProducts={products}
       />
 
       <Hero />

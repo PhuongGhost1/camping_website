@@ -6,10 +6,11 @@ interface ProductsProps {
   image: string;
   title: string;
   rating: string;
-  price: string;
-  salePrice: string;
+  price: number;
+  salePrice: number;
   quantity?: number;
   removing?: boolean;
+  category: string;
 }
 
 interface ProductsBoxProps {

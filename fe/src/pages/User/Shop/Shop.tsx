@@ -41,6 +41,7 @@ const Shop = ({
         isOpenCartWhenAdd={isOpenCartWhenAdd}
         onUpdateCartQuantity={onUpdateCartQuantity}
         cartIconRef={cartIconRef}
+        sellingProducts={products}
       />
 
       <AllProducts

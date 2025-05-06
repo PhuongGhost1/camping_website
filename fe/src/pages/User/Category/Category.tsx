@@ -13,10 +13,6 @@ interface CategoryLinkProps {
 
 const categoryNameList: CategoryLinkProps[] = [
   {
-    name: "All Products",
-    link: "/shop-all-products",
-  },
-  {
     name: "Women",
     link: "women",
   },
@@ -25,12 +21,32 @@ const categoryNameList: CategoryLinkProps[] = [
     link: "men",
   },
   {
-    name: "Rucksacks",
-    link: "rucksacks",
+    name: "Bottle",
+    link: "bottle",
   },
   {
     name: "Footwear",
     link: "footwear",
+  },
+  {
+    name: "Camping",
+    link: "camping",
+  },
+  {
+    name: "Accessories",
+    link: "accessories",
+  },
+  {
+    name: "Clothing",
+    link: "clothing",
+  },
+  {
+    name: "Bags",
+    link: "bag",
+  },
+  {
+    name: "Tents",
+    link: "tent",
   },
 ];
 
@@ -68,10 +84,12 @@ const Category: React.FC<CategoryProps> = ({
   );
 
   useEffect(() => {
-    const filteredProducts = products.filter((product) => {
-      const productName = product.category.toLowerCase();
-      return name === productName;
-    });
+    const filteredProducts = products.filter((product) =>
+      product.category.some(
+        (category) =>
+          category.name.toLowerCase().trim() === name?.toLowerCase().trim()
+      )
+    );
     setSortedProducts(filteredProducts);
   }, [products, name]);
 
@@ -103,17 +121,19 @@ const Category: React.FC<CategoryProps> = ({
         isOpenCartWhenAdd={isOpenCartWhenAdd}
         onUpdateCartQuantity={onUpdateCartQuantity}
         cartIconRef={cartIconRef}
+        sellingProducts={products}
       />
 
       <div className="product-category container">
         <div className="category-header">
           <div className="link-category">
+            <a href="/shop-all-products">All Products</a>
             {categoryNameList.map((category, index) => (
               <a
                 key={index}
                 href={category.link}
                 className={`category-link ${
-                  name === category.link ? "active" : ""
+                  name?.toLowerCase() === category.link ? "active" : ""
                 }`}
               >
                 {category.name}

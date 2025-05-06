@@ -37,11 +37,12 @@ const Product = ({
   cartIconRef,
 }: ProductPageProps) => {
   const { title } = useParams<{ title: string }>();
+  const normalizedTitle = title?.replace(/-/g, " ").toLowerCase().trim();
   const product = products.find(
-    (item) => item.title.toLowerCase() === title?.toLowerCase()
+    (item) => item.title.toLowerCase().trim() === normalizedTitle
   );
   const productBox = productBoxes.find(
-    (item) => item.title.toLowerCase() === title?.toLowerCase()
+    (item) => item.title.toLowerCase().trim() === normalizedTitle
   );
   const currentProduct = product ?? productBox;
   if (!currentProduct) {
@@ -58,10 +59,10 @@ const Product = ({
         isOpenCartWhenAdd={isOpenCartWhenAdd}
         onUpdateCartQuantity={onUpdateCartQuantity}
         cartIconRef={cartIconRef}
+        sellingProducts={products}
       />
 
       <ProductDetail
-        title={title ?? ""}
         currentProduct={currentProduct}
         onAddToCart={onAddToCart}
         cartIconRef={cartIconRef}

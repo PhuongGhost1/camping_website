@@ -34,3 +34,7 @@ export function animateAddToCart(
     document.body.removeChild(flyingItem);
   }, 1600);
 }
+
+export function sanitize(str: string) {
+  return str.replace(/\s+/g, "");
+}

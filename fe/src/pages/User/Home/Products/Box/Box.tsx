@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import "./Box.css";
 import { animateAddToCart } from "../../../../../helper/utilities/utilities";
 import { useRef } from "react";
+import { CategoryProps } from "../../../../../App";
 
 interface ProductsProps {
   discount: string;
@@ -10,7 +11,7 @@ interface ProductsProps {
   rating: string;
   price: number;
   salePrice: number;
-  category: string;
+  category: CategoryProps[];
 }
 
 interface BoxProps {

@@ -5,7 +5,6 @@ import "./ProductDetail.css";
 import { animateAddToCart } from "../../../../helper/utilities/utilities";
 
 interface ProductDetailProps {
-  title: string;
   currentProduct: SellingProductsProps;
   onAddToCart: (
     product: SellingProductsProps,
@@ -15,7 +14,6 @@ interface ProductDetailProps {
 }
 
 const ProductDetail = ({
-  title,
   currentProduct,
   onAddToCart,
   cartIconRef,
@@ -54,8 +52,13 @@ const ProductDetail = ({
             <div className="breadcrumb-divider w-embed">
               <i className="ri-arrow-right-s-line"></i>
             </div>
-            <a href={"/product/" + title}>
-              <div>{title}</div>
+            <a
+              href={
+                "/product/" +
+                currentProduct.title.toLowerCase().replace(/\s+/g, "-")
+              }
+            >
+              <div>{currentProduct.title}</div>
             </a>
           </div>
           <img
@@ -66,7 +69,7 @@ const ProductDetail = ({
         </div>
         <div className="product-info">
           <h2>{currentProduct.title}</h2>
-          <h2>$ {currentProduct.salePrice} USD</h2>
+          <h2>$ {currentProduct.salePrice.toFixed(2)} USD</h2>
           <div className="review-product">
             <div className="rating-wrapper">
               <div className="rating-icon">

@@ -17,6 +17,7 @@ interface HeaderProps {
   isOpenCartWhenAdd: boolean;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
+  sellingProducts: SellingProductsProps[];
 }
 
 const header: LinkProps[] = [
@@ -42,14 +43,6 @@ const header: LinkProps[] = [
   },
 ];
 
-const searchResult = [
-  { name: "Bottle XL" },
-  { name: "Bottle S" },
-  { name: "Bottle L" },
-  { name: "Bottle XXL" },
-  { name: "Bottle M" },
-];
-
 const Header = ({
   carts,
   quanity,
@@ -58,6 +51,7 @@ const Header = ({
   isOpenCartWhenAdd,
   onUpdateCartQuantity,
   cartIconRef,
+  sellingProducts,
 }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenCart, setIsOpenCart] = useState(false);
@@ -66,7 +60,9 @@ const Header = ({
   const [isOpenSearch, setIsOpenSearch] = useState(false);
   const [isOpenSearchResult, setIsOpenSearchResult] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [searchResults, setSearchResults] = useState(searchResult);
+  const [searchResults, setSearchResults] = useState<SellingProductsProps[]>(
+    []
+  );
 
   const openLogin = () => {
     setIsLoginOpen(true);
@@ -117,8 +113,8 @@ const Header = ({
     const value = event.target.value;
     setSearchValue(value);
 
-    const filteredResults = searchResult.filter((item) =>
-      item.name.toLowerCase().includes(value.toLowerCase())
+    const filteredResults = sellingProducts.filter((item) =>
+      item.title.toLowerCase().includes(value.toLowerCase())
     );
 
     setSearchResults(filteredResults);
@@ -132,28 +128,36 @@ const Header = ({
         <div className="background" onClick={handleCloseSearch}></div>
       )}
       <>
-        <div className="search-wrapper">
-          <div className={`search-bar ${isOpenSearch ? "open-search" : ""}`}>
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchValue}
-              onChange={(event) => handleInputChange(event)}
-            />
-            <i className="ri-close-line" onClick={handleCloseSearch}></i>
-          </div>
-          {isOpenSearchResult && (
-            <div className="search-result-container">
-              <div className="search-result-list">
-                {searchResults.map((item, index) => (
-                  <a href="#" key={index} className="search-result-item">
-                    {item.name}
-                  </a>
-                ))}
-              </div>
+        {isOpenSearch && (
+          <div className="search-wrapper">
+            <div className={`search-bar ${isOpenSearch ? "open-search" : ""}`}>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchValue}
+                onChange={(event) => handleInputChange(event)}
+              />
+              <i className="ri-close-line" onClick={handleCloseSearch}></i>
             </div>
-          )}
-        </div>
+            {isOpenSearchResult && (
+              <div className="search-result-container">
+                <div className="search-result-list">
+                  {searchResults.map((item, index) => (
+                    <a
+                      href={`/product/${item.title
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")}`}
+                      key={index}
+                      className="search-result-item"
+                    >
+                      {item.title}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </>
       <div className="nav container">
         <a href="/" className="logo">
