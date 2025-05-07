@@ -1,0 +1,195 @@
+.user-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.settings-option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.settings-option label {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.settings-option p,
+.settings-option input {
+  font-size: 1rem;
+}
+
+.settings-option input {
+  background: transparent;
+  border: none;
+}
+
+.settings-option input:focus {
+  outline: none;
+}
+
+.settings-option:last-child {
+  padding-top: 30px;
+  border-top: 1px solid var(--text-neutral);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.settings-option:last-child button {
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: cornflowerblue;
+  cursor: pointer;
+  width: 40%;
+}
+
+.label-pwd {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.button-settings {
+  width: 100%;
+  max-width: 200px;
+  padding: 0.7rem 0.5rem;
+  border-radius: 5px;
+  border: none;
+  background: var(--main-color);
+  color: #f4f4f4;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  column-gap: 10px;
+}
+
+.button-settings:hover {
+  background: #000;
+  color: var(--text-neutral-3);
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease;
+}
+
+.edit-settings-option {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.edit-setting {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.edit-setting input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.edit-button-settings {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.edit-button-settings .disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.edit-button-settings button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid var(--text-neutral-1);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.change-pwd .edit-button-settings button:first-child,
+.edit-button-settings button:first-child {
+  border: 3px solid var(--main-color);
+  background: var(--main-color);
+  color: #f4f4f4;
+}
+
+.edit-button-settings button:first-child:not(.disabled):hover {
+  background-color: #f4f4f4;
+  color: var(--main-color);
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease;
+}
+
+.edit-button-settings button:last-child {
+  border: 1px solid var(--text-neutral);
+  background: var(--text-neutral-3);
+  color: #000;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.edit-button-settings button:last-child:hover {
+  box-shadow: inset 0 0 0 2px #000;
+  background: var(--text-neutral-3);
+  color: #000;
+}
+
+.input-pwd,
+.change-pwd {
+  height: 0;
+  overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+  transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.input-pwd.open,
+.change-pwd.open {
+  height: auto;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.settings-option,
+.settings-option input {
+  width: 100%;
+}
+
+#current-password,
+#new-password,
+#re-enter-password {
+  background: var(--text-neutral-3);
+  border: 1px solid var(--text-neutral-1);
+  margin-bottom: 1rem;
+  border: 1px solid #000;
+  width: 100%;
+}
+
+#current-password input,
+#new-password input,
+#re-enter-password input {
+  border: 3px solid #000;
+}
+
+#current-password:focus,
+#new-password:focus,
+#re-enter-password:focus {
+  outline: auto;
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+}

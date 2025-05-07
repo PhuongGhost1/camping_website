@@ -82,7 +82,9 @@ const Header = ({
   };
 
   useEffect(() => {
-    setUser(userData);
+    if (!user) {
+      setUser(userData);
+    }
 
     const handleScroll = () => {
       setIsOpen(false);
@@ -97,7 +99,7 @@ const Header = ({
 
       return () => clearTimeout(timer);
     }
-  }, [carts, isOpenCartWhenAdd]);
+  }, [carts, isOpenCartWhenAdd, user]);
 
   const handleMenuToggle = () => {
     setIsOpen(!isOpen);

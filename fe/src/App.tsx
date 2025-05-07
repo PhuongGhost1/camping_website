@@ -13,6 +13,7 @@ import img_product3 from "./assets/product-3.png";
 import Shop from "./pages/User/Shop/Shop";
 import Category from "./pages/User/Category/Category";
 import Checkout from "./pages/User/Checkout/Checkout";
+import ProfilePage from "./pages/User/ProfilePage/ProfilePage";
 
 export interface UserProps {
   name: string;
@@ -402,6 +403,21 @@ function MainRoutes({
             totalPrice={totalPrice}
             onRemoveFromCart={onRemoveFromCart}
             onUpdateCartQuantity={handleUpdateCartQuantity}
+          />
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProfilePage
+            carts={carts}
+            quantity={quantity}
+            totalPrice={totalPrice}
+            onRemoveFromCart={onRemoveFromCart}
+            isOpenCartWhenAdd={isOpenCartWhenAdd}
+            cartIconRef={cartIconRef}
+            onUpdateCartQuantity={handleUpdateCartQuantity}
+            products={products}
           />
         }
       />
