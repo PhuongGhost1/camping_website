@@ -1,0 +1,7 @@
+"name","type","length","leftDigits","rightDigits"
+"id","STRING","0","0","0"
+"name","STRING","0","0","0"
+"email","STRING","0","0","0"
+"password_hash","STRING","0","0","0"
+"avatar_url","STRING","0","0","0"
+"created_at","STRING","0","0","0"

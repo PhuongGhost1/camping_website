@@ -1,0 +1,6 @@
+"name","type","length","leftDigits","rightDigits"
+"id","STRING","0","0","0"
+"user_id","STRING","0","0","0"
+"total_amount","STRING","0","0","0"
+"status","STRING","0","0","0"
+"created_at","STRING","0","0","0"
