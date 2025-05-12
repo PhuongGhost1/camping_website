@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace UserService.API.Core.Json;
+namespace AuthenticationService.API.Core.Json;
 
 public interface IJsonService
 {
@@ -28,6 +28,5 @@ public class JsonService : IJsonService
         {
             throw new InvalidOperationException("Serialization failed.", ex);
         }
-
     }
 }

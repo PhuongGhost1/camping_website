@@ -1,8 +1,13 @@
+using System.Text;
+using System.Text.Json.Serialization;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using UserService.API.Application.Services;
-using UserService.API.Application.Shared.Type;
+using UserService.API.Application.Shared.Constant;
 using UserService.API.Infrastructure.Database;
 using UserService.API.Infrastructure.Repository;
 
@@ -40,10 +45,67 @@ builder.Services.AddCors(options =>
       });
 });
 
-builder.Services.AddControllers();
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtConst.JWT_SECRET_KEY))
+        };
+        options.Events = new JwtBearerEvents {
+            OnAuthenticationFailed = context => {
+                Console.WriteLine("JWT auth failed: " + context.Exception.Message);
+                Console.WriteLine("Authorization header: " + context.Request.Headers["Authorization"]);
+                return Task.CompletedTask;
+            }
+        };
+        options.UseSecurityTokenValidators = true;
+    }
+);
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(
+    c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProductService.API", Version = "v1" });
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Description = "Please enter token",
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer"
+        });
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
+            }
+        });
+    }
+);
 
 builder.Services.AddDbContext<CampingDbContext>(options =>
 {
@@ -53,10 +115,8 @@ builder.Services.AddDbContext<CampingDbContext>(options =>
 });
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 builder.Services.AddScoped<IUserServices, UserServices>();
-builder.Services.AddScoped<IAuthServices, AuthServices>();
 
 var app = builder.Build();
 
@@ -74,8 +134,10 @@ app.UseRateLimiter();
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseRouting();
+
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
