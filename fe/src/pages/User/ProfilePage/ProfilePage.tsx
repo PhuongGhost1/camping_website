@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SellingProductsProps } from "../../../App";
+import { ProductFromApi } from "../../../App";
 import "./ProfilePage.css";
 import Header from "../../../components/Header/Header";
 import Footer from "../../../components/Footer/Footer";
@@ -7,14 +7,14 @@ import UserSettings from "./UserSettings/UserSettings";
 import OrderHistory from "./OrderHistory/OrderHistory";
 
 interface ProfilePageProps {
-  carts: SellingProductsProps[];
+  carts: ProductFromApi[];
   quantity: number;
   totalPrice: number;
-  onRemoveFromCart: (product: SellingProductsProps) => void;
+  onRemoveFromCart: (product: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
   cartIconRef: React.RefObject<HTMLDivElement>;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
-  products: SellingProductsProps[];
+  products: ProductFromApi[];
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({

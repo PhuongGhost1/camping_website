@@ -2,26 +2,16 @@ import { useNavigate } from "react-router-dom";
 import "./Box.css";
 import { animateAddToCart } from "../../../../../helper/utilities/utilities";
 import { useRef } from "react";
-import { CategoryProps } from "../../../../../App";
-
-interface ProductsProps {
-  discount: string;
-  image: string;
-  title: string;
-  rating: string;
-  price: number;
-  salePrice: number;
-  category: CategoryProps[];
-}
+import { ProductFromApi } from "../../../../../App";
 
 interface BoxProps {
-  product: ProductsProps;
-  handleAddToCart: (product: ProductsProps, numberOfQuantity: number) => void;
+  product: ProductFromApi;
+  handleAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef?: React.RefObject<HTMLDivElement>;
 }
 
 const Box = ({ product, handleAddToCart, cartIconRef }: BoxProps) => {
-  const { discount, image: img, title, rating, price, salePrice } = product;
+  const { name, imageUrl, price } = product;
   const navigate = useNavigate();
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -38,28 +28,28 @@ const Box = ({ product, handleAddToCart, cartIconRef }: BoxProps) => {
 
   return (
     <div className="product-box">
-      <span>{discount}</span>
+      <span>30%</span>
       <img
         ref={imgRef}
-        src={img}
+        src={imageUrl}
         alt=""
-        onClick={() => handleSeeDetails(title)}
+        onClick={() => handleSeeDetails(name)}
       />
-      <h2>{title}</h2>
+      <h2>{name}</h2>
       <div className="rating">
         <i className="ri-star-fill"></i>
-        <p>{rating}</p>
+        <p>4.0</p>
       </div>
       <div className="p-info">
         <div className="price">
           <p>${price.toFixed(2)}</p>
-          <h3>${salePrice.toFixed(2)}</h3>
+          <h3>${price.toFixed(2)}</h3>
         </div>
         <a onClick={handleAddToCartClick}>
           <i className="ri-handbag-line"></i>
         </a>
       </div>
-      <button className="btn-details" onClick={() => handleSeeDetails(title)}>
+      <button className="btn-details" onClick={() => handleSeeDetails(name)}>
         See Details
       </button>
     </div>

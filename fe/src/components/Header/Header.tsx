@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Header.css";
 import img_logo from "../../assets/logo.png";
-import { SellingProductsProps, UserProps } from "../../App";
+import { ProductFromApi, UserProps } from "../../App";
 import Authentication from "../Authentication/Authentication";
 import Profile from "../Profile/Profile";
 
@@ -11,19 +11,19 @@ interface LinkProps {
 }
 
 interface HeaderProps {
-  carts: SellingProductsProps[];
+  carts: ProductFromApi[];
   quanity: number;
   totalPriceOnCart: number;
-  onRemoveFromCart: (item: SellingProductsProps) => void;
+  onRemoveFromCart: (item: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
-  sellingProducts: SellingProductsProps[];
+  sellingProducts: ProductFromApi[];
 }
 
 const header: LinkProps[] = [
   {
-    link: "/category/men",
+    link: "/category/bottle",
     name: "Category",
   },
   {
@@ -65,9 +65,7 @@ const Header = ({
   const [isOpenSearch, setIsOpenSearch] = useState(false);
   const [isOpenSearchResult, setIsOpenSearchResult] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [searchResults, setSearchResults] = useState<SellingProductsProps[]>(
-    []
-  );
+  const [searchResults, setSearchResults] = useState<ProductFromApi[]>([]);
   const isMobile = window.innerWidth <= 768;
   const [user, setUser] = useState<UserProps | null>(null);
   const [isOpenUserInfo, setIsOpenUserInfo] = useState(false);
@@ -126,7 +124,7 @@ const Header = ({
     setSearchValue(value);
 
     const filteredResults = sellingProducts.filter((item) =>
-      item.title.toLowerCase().includes(value.toLowerCase())
+      item.name.toLowerCase().includes(value.toLowerCase())
     );
 
     setSearchResults(filteredResults);
@@ -166,13 +164,13 @@ const Header = ({
                 <div className="search-result-list">
                   {searchResults.map((item, index) => (
                     <a
-                      href={`/product/${item.title
+                      href={`/product/${item.name
                         .toLowerCase()
                         .replace(/\s+/g, "-")}`}
                       key={index}
                       className="search-result-item"
                     >
-                      {item.title}
+                      {item.name}
                     </a>
                   ))}
                 </div>
@@ -240,7 +238,7 @@ const Header = ({
             {carts.length > 0 ? (
               <>
                 <div className="cart-list-container">
-                  {carts.map((item: SellingProductsProps, index: number) => (
+                  {carts.map((item: ProductFromApi, index: number) => (
                     <div
                       key={index}
                       className={
@@ -248,28 +246,28 @@ const Header = ({
                       }
                     >
                       <div className="cart-item-img-wrapper">
-                        <img src={item.image} alt={item.title} />
+                        <img src={item.imageUrl} alt={item.name} />
                         <div className="cart-item-quantity-wrapper">
                           <p>Qty</p>
                           <input
                             type="number"
                             min={1}
-                            value={item.quantity || 1}
+                            value={item.stock || 1}
                             onChange={(e) => {
                               const value = e.target.value.replace(
                                 /[^0-9]/g,
                                 ""
                               );
                               const numericValue = Math.max(1, Number(value));
-                              onUpdateCartQuantity(item.title, numericValue);
+                              onUpdateCartQuantity(item.name, numericValue);
                             }}
                           />
                         </div>
                       </div>
                       <div className="cart-item-details">
                         <div>
-                          <h3>{item.title}</h3>
-                          <p>$ {item.salePrice} USD</p>
+                          <h3>{item.name}</h3>
+                          <p>$ {item.price} USD</p>
                         </div>
                         <button
                           className="btn-remove"

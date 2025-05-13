@@ -1,21 +1,10 @@
 import "./Products.css";
 import Box from "./Box/Box";
-
-interface ProductsProps {
-  discount: string;
-  image: string;
-  title: string;
-  rating: string;
-  price: number;
-  salePrice: number;
-  quantity?: number;
-  removing?: boolean;
-  category: string;
-}
+import { ProductFromApi } from "../../../../App";
 
 interface ProductsBoxProps {
-  productBoxes: ProductsProps[];
-  onAddToCart: (item: ProductsProps, numberOfQuantity: number) => void;
+  productBoxes: ProductFromApi[];
+  onAddToCart: (item: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef?: React.RefObject<HTMLDivElement>;
 }
 
@@ -36,7 +25,7 @@ const Products = ({
         focus on enjoying the great outdoors.
       </p>
       <div className="product-content">
-        {productBoxes.map((product: ProductsProps, index: number) => (
+        {productBoxes.map((product: ProductFromApi, index: number) => (
           <Box
             key={index}
             product={product}

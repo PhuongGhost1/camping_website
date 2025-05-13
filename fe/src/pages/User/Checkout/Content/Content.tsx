@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { SellingProductsProps } from "../../../../App";
+import { ProductFromApi } from "../../../../App";
 import "./Content.css";
 
 interface ContentCheckOutProps {
-  carts: SellingProductsProps[];
-  onRemoveFromCart: (product: SellingProductsProps) => void;
+  carts: ProductFromApi[];
+  onRemoveFromCart: (product: ProductFromApi) => void;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
 }
 
@@ -17,7 +17,7 @@ const Content: React.FC<ContentCheckOutProps> = ({
     "pickup"
   );
 
-  const totalPriceOfItem = (product: SellingProductsProps) => {
+  const totalPriceOfItem = (product: ProductFromApi) => {
     const currentProduct = carts.find((item) => item.title === product.title);
     if (currentProduct) {
       return Number(product.salePrice) * (currentProduct.quantity || 1);

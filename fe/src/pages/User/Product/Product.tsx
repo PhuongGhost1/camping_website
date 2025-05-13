@@ -1,27 +1,24 @@
 import { useParams } from "react-router-dom";
-import { SellingProductsProps } from "../../../App";
+import { ProductFromApi } from "../../../App";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
 import "./Product.css";
 import ProductDetail from "./ProductDetail/ProductDetail";
 
 interface CommonProps {
-  carts: SellingProductsProps[];
+  carts: ProductFromApi[];
   quantity: number;
   totalPrice: number;
-  onRemoveFromCart: (product: SellingProductsProps) => void;
+  onRemoveFromCart: (product: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
-  onAddToCart: (
-    product: SellingProductsProps,
-    numberOfQuantity: number
-  ) => void;
+  onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
 }
 
 interface ProductPageProps extends CommonProps {
-  products: SellingProductsProps[];
-  productBoxes: SellingProductsProps[];
+  products: ProductFromApi[];
+  productBoxes: ProductFromApi[];
 }
 
 const Product = ({

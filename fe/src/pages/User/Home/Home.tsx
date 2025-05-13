@@ -9,20 +9,17 @@ import Selling from "./Selling/Selling";
 import Brand from "./Brand/Brand";
 import Tips from "./Tips/Tips";
 import ScrollReveal from "scrollreveal";
-import { SellingProductsProps } from "../../../App";
+import { ProductFromApi } from "../../../App";
 
 interface CommonProps {
-  carts: SellingProductsProps[];
+  carts: ProductFromApi[];
   quantity: number;
   totalPrice: number;
-  onRemoveFromCart: (product: SellingProductsProps) => void;
+  onRemoveFromCart: (product: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
-  onAddToCart: (
-    product: SellingProductsProps,
-    numberOfQuantity: number
-  ) => void;
-  products: SellingProductsProps[];
-  productBoxes: SellingProductsProps[];
+  onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
+  products: ProductFromApi[];
+  productBoxes: ProductFromApi[];
   onUpdateCartQuantity: (title: string, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
 }

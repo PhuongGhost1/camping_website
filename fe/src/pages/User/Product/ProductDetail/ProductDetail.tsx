@@ -1,15 +1,12 @@
 import { useRef, useState } from "react";
-import { SellingProductsProps } from "../../../../App";
+import { ProductFromApi } from "../../../../App";
 import ProductDescription from "./ProductDescription/ProductDescription";
 import "./ProductDetail.css";
 import { animateAddToCart } from "../../../../helper/utilities/utilities";
 
 interface ProductDetailProps {
-  currentProduct: SellingProductsProps;
-  onAddToCart: (
-    product: SellingProductsProps,
-    numberOfQuantity: number
-  ) => void;
+  currentProduct: ProductFromApi;
+  onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef?: React.RefObject<HTMLDivElement>;
 }
 

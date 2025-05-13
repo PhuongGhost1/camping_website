@@ -1,13 +1,10 @@
-import { SellingProductsProps } from "../../../../App";
+import { ProductFromApi } from "../../../../App";
 import Box from "../../Home/Products/Box/Box";
 import "./AllProducts.css";
 
 interface AllProductsProps {
-  products: SellingProductsProps[];
-  onAddToCart: (
-    product: SellingProductsProps,
-    numberOfQuantity: number
-  ) => void;
+  products: ProductFromApi[];
+  onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
 }
 

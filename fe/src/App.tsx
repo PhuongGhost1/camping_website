@@ -3,274 +3,132 @@ import "./App.css";
 import Home from "./pages/User/Home/Home";
 import Product from "./pages/User/Product/Product";
 import { useEffect, useRef, useState } from "react";
-import img_selling_1 from "./assets/selling-1.png";
-import img_selling_2 from "./assets/selling-2.png";
-import img_selling_3 from "./assets/selling-3.png";
-import img_selling_4 from "./assets/selling-4.png";
-import img_product_1 from "./assets/product-1.png";
-import img_product2 from "./assets/product-2.png";
-import img_product3 from "./assets/product-3.png";
 import Shop from "./pages/User/Shop/Shop";
 import Category from "./pages/User/Category/Category";
 import Checkout from "./pages/User/Checkout/Checkout";
 import ProfilePage from "./pages/User/ProfilePage/ProfilePage";
+import { ApiGateway } from "./services/api/ApiService";
 
 export interface UserProps {
   name: string;
 }
 
-export interface CategoryProps {
+export interface CategoryProductProps {
+  id: string;
   name: string;
+  description: string;
+  createdAt: string;
 }
 
-const sellingProducts: SellingProductsProps[] = [
-  {
-    discount: "30%",
-    image: img_selling_1,
-    title: "Small Sun Headlight",
-    rating: "4.5",
-    price: 120.0,
-    salePrice: 80.0,
-    category: [
-      {
-        name: "Camping",
-      },
-      {
-        name: "Accessories",
-      },
-    ],
-  },
-  {
-    discount: "30%",
-    image: img_selling_2,
-    title: "Sprint Sunglasses",
-    rating: "4.5",
-    price: 10.0,
-    salePrice: 5.0,
-    category: [
-      {
-        name: "Camping",
-      },
-      {
-        name: "Accessories",
-      },
-      {
-        name: "Men",
-      },
-      {
-        name: "Women",
-      },
-    ],
-  },
-  {
-    discount: "30%",
-    image: img_selling_3,
-    title: "Sleeping Bag",
-    rating: "4.5",
-    price: 50.0,
-    salePrice: 24.0,
-    category: [
-      {
-        name: "Camping",
-      },
-      {
-        name: "Accessories",
-      },
-      {
-        name: "Men",
-      },
-      {
-        name: "Women",
-      },
-    ],
-  },
-  {
-    discount: "30%",
-    image: img_selling_4,
-    title: "Electric Water Bottle",
-    rating: "4.5",
-    price: 12.29,
-    salePrice: 4.59,
-    category: [
-      {
-        name: "Camping",
-      },
-      {
-        name: "Bottle",
-      },
-    ],
-  },
-  {
-    discount: "30%",
-    image: img_product3,
-    title: "Camping Tent",
-    rating: "4.5",
-    price: 21.12,
-    salePrice: 14.99,
-    category: [
-      {
-        name: "Camping",
-      },
-      {
-        name: "Tent",
-      },
-      {
-        name: "Men",
-      },
-      {
-        name: "Women",
-      },
-    ],
-  },
-  {
-    discount: "30%",
-    image: img_product_1,
-    title: "Folding Camping Table",
-    rating: "4.5",
-    price: 41.1,
-    salePrice: 29.0,
-    category: [
-      {
-        name: "Camping",
-      },
-      {
-        name: "Men",
-      },
-      {
-        name: "Women",
-      },
-    ],
-  },
-  {
-    discount: "30%",
-    image: img_product2,
-    title: "Sport Bottle",
-    rating: "4.5",
-    price: 116.0,
-    salePrice: 58.0,
-    category: [
-      {
-        name: "Camping",
-      },
-      {
-        name: "Bottle",
-      },
-    ],
-  },
-];
-
-const productsBox: SellingProductsProps[] = [
-  {
-    discount: "30%",
-    image: img_product_1,
-    title: "Folding Camping Table",
-    rating: "4.5",
-    price: 150.0,
-    salePrice: 110.0,
-    category: "table",
-  },
-  {
-    discount: "30%",
-    image: img_product2,
-    title: "Sport Bottle",
-    rating: "4.5",
-    price: 300.0,
-    salePrice: 200.0,
-    category: "bottle",
-  },
-  {
-    discount: "30%",
-    image: img_product3,
-    title: "Camping Tent",
-    rating: "4.5",
-    price: 210.0,
-    salePrice: 180.0,
-    category: "tent",
-  },
-];
-
-export interface SellingProductsProps {
-  discount: string;
-  image: string;
-  title: string;
-  rating: string;
+export interface ProductFromApi {
+  id: string;
+  name: string;
+  description: string;
   price: number;
-  salePrice: number;
-  quantity?: number;
+  stock: number;
+  imageUrl: string;
+  categoryId: string;
+  category: CategoryProductProps;
+  reviews: [];
+  createdAt: string;
   removing?: boolean;
-  category: CategoryProps[];
 }
 
 function App() {
-  const [carts, setCarts] = useState<SellingProductsProps[]>(productsBox);
+  const [carts, setCarts] = useState<ProductFromApi[]>([]);
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isOpenCartWhenAdd, setIsOpenCartWhenAdd] = useState(false);
-  const [products, setProducts] =
-    useState<SellingProductsProps[]>(sellingProducts);
-  const [productBoxes, setProductBoxes] =
-    useState<SellingProductsProps[]>(productsBox);
+  const [products, setProducts] = useState<ProductFromApi[]>([]);
+  const [productBoxes, setProductBoxes] = useState<ProductFromApi[]>([]);
   const cartIconRef = useRef<HTMLDivElement>(null);
 
   const handleUpdateCartQuantity = (title: string, quantity: number) => {
     setCarts((prev) =>
-      prev.map((item) => (item.title === title ? { ...item, quantity } : item))
+      prev.map((item) => (item.name === title ? { ...item, quantity } : item))
     );
   };
 
   const handleAddToCart = (
-    product: SellingProductsProps,
+    product: ProductFromApi,
     numberOfQuantity: number
   ) => {
-    const existing = carts.find((item) => item.title === product.title);
+    const existing = carts.find((item) => item.name === product.name);
     if (existing) {
       setCarts(
         carts.map((item) =>
-          item.title === product.title
-            ? { ...item, quantity: (item.quantity || 0) + numberOfQuantity }
+          item.name === product.name
+            ? { ...item, quantity: (item.stock || 0) + numberOfQuantity }
             : item
         )
       );
     } else {
-      setCarts([...carts, { ...product, quantity: numberOfQuantity }]);
+      setCarts([...carts, { ...product, stock: numberOfQuantity }]);
     }
     setIsOpenCartWhenAdd(true);
   };
 
-  const handleRemoveFromCart = (product: SellingProductsProps) => {
-    const existing = carts.find((item) => item.title === product.title);
+  const handleRemoveFromCart = (product: ProductFromApi) => {
+    const existing = carts.find((item) => item.name === product.name);
     if (existing) {
-      if (existing.quantity && existing.quantity > 1) {
+      if (existing.stock && existing.stock > 1) {
         setCarts(
           carts.map((item) =>
-            item.title === product.title
-              ? { ...item, quantity: (item.quantity || 1) - 1 }
+            item.name === product.name
+              ? { ...item, quantity: (item.stock || 1) - 1 }
               : item
           )
         );
       } else {
         setCarts(
           carts.map((item) =>
-            item.title === product.title ? { ...item, removing: true } : item
+            item.name === product.name ? { ...item, removing: true } : item
           )
         );
 
         setTimeout(() => {
-          setCarts((prev) =>
-            prev.filter((item) => item.title !== product.title)
-          );
+          setCarts((prev) => prev.filter((item) => item.name !== product.name));
         }, 1000);
       }
     }
   };
 
   useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const data = await ApiGateway.getAllProducts<{
+        products: ProductFromApi[];
+        page: number;
+        pageSize: number;
+        total: number;
+      }>("", 1, 7);
+
+      const data2 = await ApiGateway.getAllProducts<{
+        products: ProductFromApi[];
+        page: number;
+        pageSize: number;
+        total: number;
+      }>("", 1, 3);
+
+      setProducts(data.products || []);
+      setProductBoxes(data2.products || []);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setProducts([]);
+      setProductBoxes([]);
+    }
+  };
+
+  useEffect(() => {
     const total = carts.reduce((acc, item) => {
-      return acc + Number(item.salePrice) * (item.quantity || 1);
+      return acc + Number(item.price) * (item.stock || 1);
     }, 0);
     setTotalPrice(total);
 
-    const totalQty = carts.reduce((acc, item) => acc + (item.quantity || 1), 0);
+    const totalQty = carts.reduce((acc, item) => acc + (item.stock || 1), 0);
     setQuantity(totalQty);
   }, [carts]);
 
@@ -295,17 +153,14 @@ function App() {
 export default App;
 
 interface RouteProps {
-  carts: SellingProductsProps[];
+  carts: ProductFromApi[];
   quantity: number;
   totalPrice: number;
-  onRemoveFromCart: (product: SellingProductsProps) => void;
+  onRemoveFromCart: (product: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
-  onAddToCart: (
-    product: SellingProductsProps,
-    numberOfQuantity: number
-  ) => void;
-  products: SellingProductsProps[];
-  productBoxes: SellingProductsProps[];
+  onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
+  products: ProductFromApi[];
+  productBoxes: ProductFromApi[];
   handleUpdateCartQuantity: (title: string, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
 }
@@ -324,6 +179,9 @@ function MainRoutes({
 }: RouteProps) {
   const location = useLocation();
   const background = location.state?.background;
+
+  console.log("products in routes", products);
+
   return (
     <Routes location={background || location}>
       <Route

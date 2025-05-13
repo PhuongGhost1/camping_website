@@ -13,14 +13,11 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import Box from "../Products/Box/Box";
-import { SellingProductsProps } from "../../../../App";
+import { ProductFromApi } from "../../../../App";
 
 interface SellingProps {
-  sellingProducts: SellingProductsProps[];
-  onAddToCart: (
-    product: SellingProductsProps,
-    numberOfQuantity: number
-  ) => void;
+  sellingProducts: ProductFromApi[];
+  onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef?: React.RefObject<HTMLDivElement>;
 }
 
@@ -67,15 +64,16 @@ const Selling = ({
         }}
         className="selling-slider"
       >
-        {sellingProducts.map((product: SellingProductsProps, index: number) => (
-          <SwiperSlide key={index}>
-            <Box
-              product={product}
-              handleAddToCart={onAddToCart}
-              cartIconRef={cartIconRef}
-            />
-          </SwiperSlide>
-        ))}
+        {Array.isArray(sellingProducts) &&
+          sellingProducts.map((product: ProductFromApi, index: number) => (
+            <SwiperSlide key={index}>
+              <Box
+                product={product}
+                handleAddToCart={onAddToCart}
+                cartIconRef={cartIconRef}
+              />
+            </SwiperSlide>
+          ))}
 
         <div className="slides-control">
           <div className="swiper-pagination"></div>

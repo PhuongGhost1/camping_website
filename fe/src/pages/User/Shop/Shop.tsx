@@ -1,22 +1,19 @@
-import { SellingProductsProps } from "../../../App";
+import { ProductFromApi } from "../../../App";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
 import AllProducts from "./AllProducts/AllProducts";
 import "./Shop.css";
 
 interface ShopProps {
-  carts: SellingProductsProps[];
+  carts: ProductFromApi[];
   quanity: number;
   totalPriceOnCart: number;
-  onRemoveFromCart: (product: SellingProductsProps) => void;
+  onRemoveFromCart: (product: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
-  products: SellingProductsProps[];
-  productBoxes: SellingProductsProps[];
-  onAddToCart: (
-    product: SellingProductsProps,
-    numberOfQuantity: number
-  ) => void;
+  products: ProductFromApi[];
+  productBoxes: ProductFromApi[];
+  onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
 }
 

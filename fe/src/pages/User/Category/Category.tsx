@@ -1,68 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { SellingProductsProps } from "../../../App";
+import { CategoryProductProps, ProductFromApi } from "../../../App";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
 import "./Category.css";
 import Box from "../Home/Products/Box/Box";
 import { useParams } from "react-router-dom";
-
-interface CategoryLinkProps {
-  name: string;
-  link: string;
-}
-
-const categoryNameList: CategoryLinkProps[] = [
-  {
-    name: "Women",
-    link: "women",
-  },
-  {
-    name: "Men",
-    link: "men",
-  },
-  {
-    name: "Bottle",
-    link: "bottle",
-  },
-  {
-    name: "Footwear",
-    link: "footwear",
-  },
-  {
-    name: "Camping",
-    link: "camping",
-  },
-  {
-    name: "Accessories",
-    link: "accessories",
-  },
-  {
-    name: "Clothing",
-    link: "clothing",
-  },
-  {
-    name: "Bags",
-    link: "bag",
-  },
-  {
-    name: "Tents",
-    link: "tent",
-  },
-];
+import { ApiGateway } from "../../../services/api/ApiService";
 
 interface CategoryProps {
-  carts: SellingProductsProps[];
+  carts: ProductFromApi[];
   quanity: number;
   totalPriceOnCart: number;
-  onRemoveFromCart: (product: SellingProductsProps) => void;
+  onRemoveFromCart: (product: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
-  products: SellingProductsProps[];
-  productBoxes: SellingProductsProps[];
-  onAddToCart: (
-    product: SellingProductsProps,
-    numberOfQuantity: number
-  ) => void;
+  products: ProductFromApi[];
+  productBoxes: ProductFromApi[];
+  onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
 }
 
@@ -79,17 +33,32 @@ const Category: React.FC<CategoryProps> = ({
 }) => {
   const { name } = useParams<string>();
   const [isOpenSort, setIsOpenSort] = useState(false);
-  const [sortedProducts, setSortedProducts] = useState<SellingProductsProps[]>(
-    []
-  );
+  const [sortedProducts, setSortedProducts] = useState<ProductFromApi[]>([]);
+  const [categoryNameList, setCategoryNameList] = useState<
+    CategoryProductProps[]
+  >([]);
 
   useEffect(() => {
-    const filteredProducts = products.filter((product) =>
-      product.category.some(
-        (category) =>
-          category.name.toLowerCase().trim() === name?.toLowerCase().trim()
-      )
-    );
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await ApiGateway.getAllCategories<CategoryProductProps[]>();
+      setCategoryNameList(data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      setCategoryNameList([]);
+    }
+  };
+
+  useEffect(() => {
+    const filteredProducts = products.filter((product) => {
+      const productCategoryName = product.category?.name?.toLowerCase().trim();
+      const routeName = name?.toLowerCase().trim();
+      return productCategoryName === routeName;
+    });
+
     setSortedProducts(filteredProducts);
   }, [products, name]);
 
@@ -100,13 +69,13 @@ const Category: React.FC<CategoryProps> = ({
   const handleSort = (sortType: string) => {
     const sorted = [...sortedProducts];
     if (sortType === "nameAsc") {
-      sorted.sort((a, b) => a.title.localeCompare(b.title));
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
     } else if (sortType === "nameDesc") {
-      sorted.sort((a, b) => b.title.localeCompare(a.title));
+      sorted.sort((a, b) => b.name.localeCompare(a.name));
     } else if (sortType === "priceAsc") {
-      sorted.sort((a, b) => a.salePrice - b.salePrice);
+      sorted.sort((a, b) => a.price - b.price);
     } else if (sortType === "priceDesc") {
-      sorted.sort((a, b) => b.salePrice - a.salePrice);
+      sorted.sort((a, b) => b.price - a.price);
     }
     setSortedProducts(sorted);
   };
@@ -128,17 +97,20 @@ const Category: React.FC<CategoryProps> = ({
         <div className="category-header">
           <div className="link-category">
             <a href="/shop-all-products">All Products</a>
-            {categoryNameList.map((category, index) => (
-              <a
-                key={index}
-                href={category.link}
-                className={`category-link ${
-                  name?.toLowerCase() === category.link ? "active" : ""
-                }`}
-              >
-                {category.name}
-              </a>
-            ))}
+            {Array.isArray(categoryNameList) &&
+              categoryNameList.map((category) => (
+                <a
+                  key={category.id}
+                  href={`/category/${category.name.toLowerCase()}`}
+                  className={`category-link ${
+                    name?.toLowerCase() === category.name.toLowerCase()
+                      ? "active"
+                      : ""
+                  }`}
+                >
+                  {category.name}
+                </a>
+              ))}
           </div>
           <div className="sort-category">
             <button className="btn-sort" onClick={handleOpenSort}>
