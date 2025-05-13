@@ -1,20 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProductService.API.Domain;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace ProductService.API.Infrastructure.Database;
 
-public partial class CampingDbContext : IdentityDbContext
+public partial class CampingDbContext : DbContext
 {
     public virtual DbSet<Categories> Categories { get; set; }
+
     public virtual DbSet<Products> Products { get; set; }
+
     public virtual DbSet<Reviews> Reviews { get; set; }
 
-    public CampingDbContext(DbContextOptions<CampingDbContext> options) : base(options) { }
+    public CampingDbContext(DbContextOptions<CampingDbContext> options)
+        : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
+        modelBuilder
+            .UseCollation("utf8mb4_0900_ai_ci")
+            .HasCharSet("utf8mb4");
 
         modelBuilder.Entity<Categories>(entity =>
         {
@@ -23,6 +27,9 @@ public partial class CampingDbContext : IdentityDbContext
             entity.ToTable("categories");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
             entity.Property(e => e.Description)
                 .HasColumnType("text")
                 .HasColumnName("description");
@@ -58,11 +65,6 @@ public partial class CampingDbContext : IdentityDbContext
                 .HasPrecision(10, 2)
                 .HasColumnName("price");
             entity.Property(e => e.Stock).HasColumnName("stock");
-
-            entity.HasOne(d => d.Category).WithMany(p => p.Products)
-                .HasForeignKey(d => d.CategoryId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("products_ibfk_1");
         });
 
         modelBuilder.Entity<Reviews>(entity =>
@@ -94,5 +96,9 @@ public partial class CampingDbContext : IdentityDbContext
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("reviews_ibfk_2");
         });
+
+        OnModelCreatingPartial(modelBuilder);
     }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

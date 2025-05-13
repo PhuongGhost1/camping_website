@@ -10,4 +10,7 @@ public class ProductList
 public interface IProductRepository
 {
     Task<ProductList> GetProducts(GetProductReq req);
+    Task<Products?> GetProductById(Guid id);
+    Task<bool> CreateProduct(Products product);
+    Task<bool> UpdateProduct(Products product);
 }

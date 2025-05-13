@@ -6,8 +6,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductService.API.Application.Services;
 using ProductService.API.Application.Shared.Constant;
+using ProductService.API.Core.GCSService;
 using ProductService.API.Infrastructure.Cache;
 using ProductService.API.Infrastructure.Database;
+using ProductService.API.Infrastructure.Repository.Category;
 using ProductService.API.Infrastructure.Repository.Product;
 using StackExchange.Redis;
 using System.Text;
@@ -117,15 +119,18 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 
 builder.Services.AddDbContext<CampingDbContext>(options =>
 {
-    Console.WriteLine($"Using ConnectionString: {MySQLDatabase.DB_CONNECTION_STRING}");
     options.UseMySql(MySQLDatabase.DB_CONNECTION_STRING, ServerVersion.Parse("8.0.34-mysql"));
 
 });
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddScoped<IProductService, ProductServices>();
 builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+builder.Services.AddScoped<IMediaServices, MediaServices>();
+builder.Services.AddScoped<IGCSService, LocalStorageService>();
 
 var app = builder.Build();
 
@@ -137,6 +142,8 @@ app.MapGet("/", async context =>
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseStaticFiles();
 
 app.UseCors("AllowAllOrigins");
 app.UseRateLimiter();

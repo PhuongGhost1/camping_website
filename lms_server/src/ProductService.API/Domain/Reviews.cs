@@ -1,6 +1,4 @@
 ﻿using ProductService.API.Application.Shared.Type;
-using System;
-using System.Collections.Generic;
 
 namespace ProductService.API.Domain;
 
