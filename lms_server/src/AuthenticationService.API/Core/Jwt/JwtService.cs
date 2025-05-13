@@ -12,6 +12,7 @@ public interface IJwtService
 {
     string GenerateToken(Guid userId, Guid sessionId, string email, int exp);
     string HashObject<T>(T obj);
+    string GenerateRefreshToken();
 }
 
 public class JwtService : IJwtService
@@ -24,6 +25,11 @@ public class JwtService : IJwtService
         var SecretKey = JwtConst.JWT_SECRET_KEY;
         _key = Encoding.UTF8.GetBytes(SecretKey);
         _handler = new JsonWebTokenHandler();
+    }
+
+    public string GenerateRefreshToken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 
     public string GenerateToken(Guid userId, Guid sessionId, string email, int exp)

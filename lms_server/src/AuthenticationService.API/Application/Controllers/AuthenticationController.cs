@@ -25,5 +25,17 @@ namespace AuthenticationService.API.Application.Controllers
         {
             return await _authenticationService.Register(req);
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest req)
+        {
+            return await _authenticationService.RefreshToken(req);
+        }
+
+        [HttpDelete("logout")]
+        public async Task<IActionResult> LogOut([FromBody] Guid userId)
+        {
+            return await _authenticationService.LogOut(userId);
+        }
     }
 }

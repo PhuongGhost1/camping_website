@@ -11,6 +11,27 @@ public class AuthenticationRepository : IAuthenticationRepository
         _context = context;
     }
 
+    public async Task<bool> DeleteRefreshTokenByUserId(Guid userId)
+    {
+        return await _context.Refreshtokens
+            .Where(r => r.UserId.Equals(userId))
+            .ExecuteDeleteAsync() > 0;
+    }
+
+    public async Task<Refreshtokens?> GetRefreshToken(string refreshToken)
+    {
+        return await _context.Refreshtokens
+            .Where(r => r.Token.ToLower().Equals(refreshToken.ToLower()))
+            .FirstOrDefaultAsync();
+    }
+
+    public Task<Users?> GetUserById(Guid? userId)
+    {
+        return _context.Users
+            .Where(u => u.Id.Equals(userId))
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<bool> IsEmailExists(string email)
     {
         return await _context.Users.AnyAsync(u => u.Email.ToLower().Equals(email.ToLower()));
@@ -27,5 +48,17 @@ public class AuthenticationRepository : IAuthenticationRepository
         await _context.Users.AddAsync(users);
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<bool> SaveRefreshToken(Refreshtokens refreshToken)
+    {
+        await _context.Refreshtokens.AddAsync(refreshToken);
+        return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> UpdateRefreshToken(Refreshtokens refreshToken)
+    {
+        _context.Refreshtokens.Update(refreshToken);
+        return await _context.SaveChangesAsync() > 0;
     }
 }

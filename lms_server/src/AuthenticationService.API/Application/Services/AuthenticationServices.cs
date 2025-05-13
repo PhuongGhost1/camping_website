@@ -12,6 +12,8 @@ public interface IAuthenticationService
 {
     Task<IActionResult> Login(LoginRequest req);
     Task<IActionResult> Register(RegisterRequest req);
+    Task<IActionResult> RefreshToken(RefreshTokenRequest req);
+    Task<IActionResult> LogOut(Guid userId);
 }
 public class AuthenticationServices : IAuthenticationService
 {
@@ -30,12 +32,76 @@ public class AuthenticationServices : IAuthenticationService
 
             if (user is null) return ErrorResp.Unauthorized("Login Failed!");
 
+            var refreshToken = _jwtService.GenerateRefreshToken();
+            var refreshTokenObj = new Refreshtokens
+            {
+                Token = refreshToken,
+                UserId = user.Id,
+                ExpirationDate = DateTime.UtcNow.AddDays(JwtConst.REFRESH_TOKEN_EXP),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var isSaved = await _authRepo.SaveRefreshToken(refreshTokenObj);
+            if (!isSaved) return ErrorResp.BadRequest("Failed to save refresh token!");
+
             return SuccessResp.Ok(new LoginResponse
             (
                 user.Email,
                 user.PasswordHash,
-                _jwtService.GenerateToken(user.Id, Guid.NewGuid(), user.Email, JwtConst.ACCESS_TOKEN_EXP)
+                _jwtService.GenerateToken(user.Id, Guid.NewGuid(), user.Email, JwtConst.ACCESS_TOKEN_EXP),
+                refreshTokenObj.Token
             ));
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> LogOut(Guid userId)
+    {
+        try
+        {
+            var isDeleted = await _authRepo.DeleteRefreshTokenByUserId(userId);
+            if (!isDeleted) return ErrorResp.BadRequest("Failed to delete refresh token!");
+
+            return SuccessResp.Ok("Logout Successfully!");
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> RefreshToken(RefreshTokenRequest req)
+    {
+        try
+        {
+            var rftToken = await _authRepo.GetRefreshToken(req.refreshToken);
+
+            if (rftToken is null) 
+                return ErrorResp.Unauthorized("Invalid refresh token!");
+
+            if (rftToken.ExpirationDate < DateTime.UtcNow) 
+                return ErrorResp.Unauthorized("Refresh token expired!");
+
+            rftToken.Token = _jwtService.GenerateRefreshToken();
+            rftToken.ExpirationDate = DateTime.UtcNow.AddDays(JwtConst.REFRESH_TOKEN_EXP);
+
+            var isUpdated = await _authRepo.UpdateRefreshToken(rftToken);
+            if (!isUpdated) return ErrorResp.BadRequest("Failed to update refresh token!");
+
+            var user = await _authRepo.GetUserById(rftToken.UserId);
+            if (user is null) return ErrorResp.Unauthorized("User not found!");
+
+            var newAccessToken = _jwtService.GenerateToken(user.Id, Guid.NewGuid(), user.Email, JwtConst.ACCESS_TOKEN_EXP);
+
+            return SuccessResp.Ok(new RefreshTokenResponse
+            (
+                newAccessToken,
+                rftToken.Token
+            ));
+                
         }
         catch (Exception ex)
         {

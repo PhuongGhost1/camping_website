@@ -1,6 +1,4 @@
 ﻿using AuthenticationService.API.Application.Shared.Constant.Type;
-using System;
-using System.Collections.Generic;
 
 namespace AuthenticationService.API.Domain;
 

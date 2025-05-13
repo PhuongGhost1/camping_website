@@ -8,12 +8,36 @@ namespace AuthenticationService.API.Infrastructure.Database;
 
 public partial class CampingDbContext : DbContext
 {
+    public CampingDbContext(DbContextOptions<CampingDbContext> options)
+        : base(options)
+    {
+    }
+
+    public virtual DbSet<Refreshtokens> Refreshtokens { get; set; }
+
     public virtual DbSet<Users> Users { get; set; }
-    public CampingDbContext(DbContextOptions<CampingDbContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
+        modelBuilder
+            .UseCollation("utf8mb4_0900_ai_ci")
+            .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<Refreshtokens>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("refreshtokens");
+
+            entity.Property(e => e.Id)
+                .UseCollation("ascii_general_ci")
+                .HasCharSet("ascii");
+            entity.Property(e => e.CreatedAt).HasMaxLength(6);
+            entity.Property(e => e.ExpirationDate).HasMaxLength(6);
+            entity.Property(e => e.UserId)
+                .UseCollation("ascii_general_ci")
+                .HasCharSet("ascii");
+        });
 
         modelBuilder.Entity<Users>(entity =>
         {
@@ -39,5 +63,9 @@ public partial class CampingDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("password_hash");
         });
+
+        OnModelCreatingPartial(modelBuilder);
     }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
