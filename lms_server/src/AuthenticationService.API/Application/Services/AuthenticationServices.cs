@@ -52,7 +52,7 @@ public class AuthenticationServices : IAuthenticationService
                 refreshTokenObj.Token
             ));
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -62,12 +62,15 @@ public class AuthenticationServices : IAuthenticationService
     {
         try
         {
+            if(userId == Guid.Empty || userId == null) 
+                return ErrorResp.Unauthorized("User not authorized!");
+
             var isDeleted = await _authRepo.DeleteRefreshTokenByUserId(userId);
             if (!isDeleted) return ErrorResp.BadRequest("Failed to delete refresh token!");
 
             return SuccessResp.Ok("Logout Successfully!");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -103,7 +106,7 @@ public class AuthenticationServices : IAuthenticationService
             ));
                 
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
@@ -129,7 +132,7 @@ public class AuthenticationServices : IAuthenticationService
             return user ? SuccessResp.Ok(new RegisterResponse(newUser, "Register Successfully!")) 
             : ErrorResp.BadRequest("Faild to create user!");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
