@@ -3,6 +3,7 @@ using AuthenticationService.API.Application.Shared.Constant;
 using AuthenticationService.API.Application.Shared.Constant.Type;
 using AuthenticationService.API.Core.Jwt;
 using AuthenticationService.API.Domain;
+using AuthenticationService.API.Infrastructure.Messaging.Publisher;
 using AuthenticationService.API.Infrastructure.Repository.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,10 +20,12 @@ public class AuthenticationServices : IAuthenticationService
 {
     private readonly IAuthenticationRepository _authRepo;
     private readonly IJwtService _jwtService;
-    public AuthenticationServices(IAuthenticationRepository authRepo, IJwtService jwtService)
+    private readonly IEventPublisher _eventPublisher;
+    public AuthenticationServices(IAuthenticationRepository authRepo, IJwtService jwtService, IEventPublisher eventPublisher)
     {
         _authRepo = authRepo;
         _jwtService = jwtService;
+        _eventPublisher = eventPublisher;
     }
     public async Task<IActionResult> Login(LoginRequest req)
     {
@@ -128,6 +131,8 @@ public class AuthenticationServices : IAuthenticationService
             };
 
             var user = await _authRepo.Register(newUser);
+
+            _eventPublisher.PublishUserRegisteredIn(userId: newUser.Id);
 
             return user ? SuccessResp.Ok(new RegisterResponse(newUser, "Register Successfully!")) 
             : ErrorResp.BadRequest("Faild to create user!");

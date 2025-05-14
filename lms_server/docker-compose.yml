@@ -12,6 +12,17 @@ services:
     environment:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - backend
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
 # be.api:
 #     image: beapi
 #     container_name: be-api
@@ -44,17 +55,6 @@ services:
 #     ports:
 #         - 5341:5341 # Logging
 #         - 8081:80 # Web UI run on port 8081
-#     networks:
-#         - backend
-
-# rabbitmq:
-#     image: rabbitmq:3-management
-#     ports:
-#         - 5672:5672
-#         - 15672:15672
-#     environment:
-#         - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-#         - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
 #     networks:
 #         - backend
 

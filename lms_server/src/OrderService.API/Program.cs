@@ -3,9 +3,14 @@ using System.Text.Json.Serialization;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OrderService.API.Application.Services;
 using OrderService.API.Application.Shared.Constant;
+using OrderService.API.Infrastructure.Database;
+using OrderService.API.Infrastructure.Messaging.Consumer;
+using OrderService.API.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 string envPath = Path.GetFullPath(Path.Combine
@@ -109,11 +114,18 @@ builder.Services.AddSwaggerGen(
 //     return ConnectionMultiplexer.Connect(configuration);
 // });
 
-// builder.Services.AddDbContext<CampingDbContext>(options =>
-// {
-//     Console.WriteLine($"Using ConnectionString: {MySQLDatabase.DB_CONNECTION_STRING}");
-//     options.UseMySql(MySQLDatabase.DB_CONNECTION_STRING, ServerVersion.Parse("8.0.34-mysql"));
-// });
+builder.Services.AddDbContext<CampingDbContext>(options =>
+{
+    options.UseMySql(MySQLDatabase.DB_CONNECTION_STRING, ServerVersion.Parse("8.0.34-mysql"));
+});
+
+builder.Services.AddScoped<IOrderServices, OrderServices>();
+builder.Services.AddScoped<IOrderItemServices, OrderItemServices>();
+
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+
+builder.Services.AddHostedService<RegisterEventConsumer>();
 
 var app = builder.Build();
 

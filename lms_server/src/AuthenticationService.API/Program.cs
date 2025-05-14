@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using AuthenticationService.API.Infrastructure.Messaging.Publisher;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -119,6 +120,8 @@ builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>(
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationServices>();
+
+builder.Services.AddSingleton<IEventPublisher, EventPublisher>();
 
 var app = builder.Build();
 

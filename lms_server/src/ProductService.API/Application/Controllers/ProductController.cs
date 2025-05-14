@@ -44,5 +44,12 @@ namespace ProductService.API.Application.Controllers
             _logger.LogInformation("Update Product");
             return await _productService.HandleUpdateProduct(updateProductReq);
         }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetProductById([FromRoute] Guid id)
+        {
+            _logger.LogInformation("Get Product by Id");
+            return await _productService.HandleGetProductById(id);
+        }
     }
 }

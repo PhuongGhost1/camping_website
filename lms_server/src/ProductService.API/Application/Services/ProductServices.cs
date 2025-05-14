@@ -14,6 +14,7 @@ public interface IProductService
     public Task<IActionResult> HandleGetProducts(GetProductReq req, Guid? userId);
     public Task<IActionResult> HandleCreateProduct(CreateProductReq createProductReq);
     public Task<IActionResult> HandleUpdateProduct(UpdateProductReq updateProductReq);
+    public Task<IActionResult> HandleGetProductById(Guid id);
 }
 
 public class ProductServices : IProductService
@@ -67,6 +68,29 @@ public class ProductServices : IProductService
             ));
         }
         catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> HandleGetProductById(Guid id)
+    {
+        try
+        {
+            if (id == Guid.Empty)
+            {
+                return ErrorResp.InternalServerError("Product ID is required");
+            }
+
+            var product = await _productRepo.GetProductById(id);
+            if (product is null)
+            {
+                return ErrorResp.InternalServerError("Product not found");
+            }
+
+            return SuccessResp.Ok(product);
+        }
+        catch (System.Exception)
         {
             throw;
         }
