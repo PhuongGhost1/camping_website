@@ -1,6 +1,7 @@
 import React from "react";
 import { UserProps } from "../../App";
 import "./Profile.css";
+import { useAuthenContext } from "../../hooks/AuthenContext";
 
 interface ProfileProps {
   user: UserProps | null;
@@ -13,6 +14,8 @@ const Profile: React.FC<ProfileProps> = ({
   handleOpenUserInfo,
   isOpenUserInfo,
 }) => {
+  const { logout } = useAuthenContext();
+
   return (
     <div className={`user-info-container ${isOpenUserInfo ? "active" : ""}`}>
       <div className="flex-container">
@@ -56,7 +59,17 @@ const Profile: React.FC<ProfileProps> = ({
             </p>
           </div>
         </div>
-        <a href="#">Sign out</a>
+        <a
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            logout().then(() => {
+              window.location.href = "/";
+            });
+          }}
+        >
+          Sign out
+        </a>
       </div>
     </div>
   );

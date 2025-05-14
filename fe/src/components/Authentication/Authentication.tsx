@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Authentication.css";
 import LoginSide from "../../assets/login-side.png";
+import { useAuthenContext } from "../../hooks/AuthenContext";
 // import { Store } from "react-notifications-component";
 
 interface AuthenticationProps {
@@ -17,6 +18,7 @@ const Authentication: React.FC<AuthenticationProps> = ({
   const [usernameInput, setUsernameInput] = useState<string>("");
   const [isWrongSignIn, setIsWrongSignIn] = useState<boolean>(false);
   const [typeInput, setTypeInput] = useState<string>(type);
+  const { login } = useAuthenContext();
 
   const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmailInput(e.target.value);
@@ -30,15 +32,14 @@ const Authentication: React.FC<AuthenticationProps> = ({
     setUsernameInput(e.target.value);
   };
 
-  // const onClickSignIn = async () => {
-  // 	const isSuccess = await login(emailInput, passwordInput);
-  // 	if (isSuccess) {
-  // 		closeLogin();
-  // 		await fetchUser();
-  // 	} else {
-  // 		setIsWrongSignIn(true)
-  // 	}
-  // }
+  const onClickSignIn = async () => {
+    const isSuccess = await login(emailInput, passwordInput);
+    if (isSuccess) {
+      closeLogin();
+    } else {
+      setIsWrongSignIn(true);
+    }
+  };
 
   // const Register = async () => {
   // 	const isSuccess = await ApiGateway.SignUp(usernameInput, emailInput, passwordInput)
@@ -131,7 +132,9 @@ const Authentication: React.FC<AuthenticationProps> = ({
                     Forgot Password?
                   </a>
                 </div>
-                <button className="sign-in">Sign In</button>
+                <button className="sign-in" onClick={onClickSignIn}>
+                  Sign In
+                </button>
                 <p className="sign-up">
                   Don't have an account?{" "}
                   <span

@@ -52,21 +52,21 @@ const ProductDetail = ({
             <a
               href={
                 "/product/" +
-                currentProduct.title.toLowerCase().replace(/\s+/g, "-")
+                currentProduct.name.toLowerCase().replace(/\s+/g, "-")
               }
             >
-              <div>{currentProduct.title}</div>
+              <div>{currentProduct.name}</div>
             </a>
           </div>
           <img
             ref={imgRef}
-            src={currentProduct.image}
-            alt={currentProduct.title}
+            src={currentProduct.imageUrl}
+            alt={currentProduct.name}
           />
         </div>
         <div className="product-info">
-          <h2>{currentProduct.title}</h2>
-          <h2>$ {currentProduct.salePrice.toFixed(2)} USD</h2>
+          <h2>{currentProduct.name}</h2>
+          <h2>$ {currentProduct.price.toFixed(2)} USD</h2>
           <div className="review-product">
             <div className="rating-wrapper">
               <div className="rating-icon">
@@ -85,9 +85,7 @@ const ProductDetail = ({
                 <i className="ri-star-half-fill"></i>
               </div>
             </div>
-            <div className="text-size-small">
-              ({currentProduct.rating} starts) • 10 reviews
-            </div>
+            <div className="text-size-small">(5 starts) • 10 reviews</div>
           </div>
           <a
             href="https://webflow.com/apps/detail/supersparks"

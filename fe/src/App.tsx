@@ -8,9 +8,12 @@ import Category from "./pages/User/Category/Category";
 import Checkout from "./pages/User/Checkout/Checkout";
 import ProfilePage from "./pages/User/ProfilePage/ProfilePage";
 import { ApiGateway } from "./services/api/ApiService";
+import AuthenProvider from "./hooks/AuthenContext";
+import { ReactNotifications } from "react-notifications-component";
 
 export interface UserProps {
   name: string;
+  imageUrl: string;
 }
 
 export interface CategoryProductProps {
@@ -180,105 +183,106 @@ function MainRoutes({
   const location = useLocation();
   const background = location.state?.background;
 
-  console.log("products in routes", products);
-
   return (
-    <Routes location={background || location}>
-      <Route
-        path="/"
-        element={
-          <Home
-            carts={carts}
-            quantity={quantity}
-            totalPrice={totalPrice}
-            onRemoveFromCart={onRemoveFromCart}
-            isOpenCartWhenAdd={isOpenCartWhenAdd}
-            onAddToCart={onAddToCart}
-            products={products}
-            productBoxes={productBoxes}
-            onUpdateCartQuantity={handleUpdateCartQuantity}
-            cartIconRef={cartIconRef}
-          />
-        }
-      />
-      <Route
-        path="/product/:title"
-        element={
-          <Product
-            carts={carts}
-            quantity={quantity}
-            totalPrice={totalPrice}
-            onRemoveFromCart={onRemoveFromCart}
-            isOpenCartWhenAdd={isOpenCartWhenAdd}
-            onAddToCart={onAddToCart}
-            products={products}
-            productBoxes={productBoxes}
-            onUpdateCartQuantity={handleUpdateCartQuantity}
-            cartIconRef={cartIconRef}
-          />
-        }
-      />
-      <Route
-        path="/shop-all-products"
-        element={
-          <Shop
-            carts={carts}
-            quanity={quantity}
-            totalPriceOnCart={totalPrice}
-            onRemoveFromCart={onRemoveFromCart}
-            isOpenCartWhenAdd={isOpenCartWhenAdd}
-            onUpdateCartQuantity={handleUpdateCartQuantity}
-            products={products}
-            productBoxes={productBoxes}
-            onAddToCart={onAddToCart}
-            cartIconRef={cartIconRef}
-          />
-        }
-      />
-      <Route
-        path="/category/:name"
-        element={
-          <Category
-            carts={carts}
-            quanity={quantity}
-            totalPriceOnCart={totalPrice}
-            onRemoveFromCart={onRemoveFromCart}
-            isOpenCartWhenAdd={isOpenCartWhenAdd}
-            onUpdateCartQuantity={handleUpdateCartQuantity}
-            products={products}
-            productBoxes={productBoxes}
-            onAddToCart={onAddToCart}
-            cartIconRef={cartIconRef}
-          />
-        }
-      />
-      <Route
-        path="/checkout"
-        element={
-          <Checkout
-            carts={carts}
-            quantity={quantity}
-            totalPrice={totalPrice}
-            onRemoveFromCart={onRemoveFromCart}
-            onUpdateCartQuantity={handleUpdateCartQuantity}
-          />
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          <ProfilePage
-            carts={carts}
-            quantity={quantity}
-            totalPrice={totalPrice}
-            onRemoveFromCart={onRemoveFromCart}
-            isOpenCartWhenAdd={isOpenCartWhenAdd}
-            cartIconRef={cartIconRef}
-            onUpdateCartQuantity={handleUpdateCartQuantity}
-            products={products}
-          />
-        }
-      />
-    </Routes>
+    <AuthenProvider>
+      <ReactNotifications />
+      <Routes location={background || location}>
+        <Route
+          path="/"
+          element={
+            <Home
+              carts={carts}
+              quantity={quantity}
+              totalPrice={totalPrice}
+              onRemoveFromCart={onRemoveFromCart}
+              isOpenCartWhenAdd={isOpenCartWhenAdd}
+              onAddToCart={onAddToCart}
+              products={products}
+              productBoxes={productBoxes}
+              onUpdateCartQuantity={handleUpdateCartQuantity}
+              cartIconRef={cartIconRef}
+            />
+          }
+        />
+        <Route
+          path="/product/:title"
+          element={
+            <Product
+              carts={carts}
+              quantity={quantity}
+              totalPrice={totalPrice}
+              onRemoveFromCart={onRemoveFromCart}
+              isOpenCartWhenAdd={isOpenCartWhenAdd}
+              onAddToCart={onAddToCart}
+              products={products}
+              productBoxes={productBoxes}
+              onUpdateCartQuantity={handleUpdateCartQuantity}
+              cartIconRef={cartIconRef}
+            />
+          }
+        />
+        <Route
+          path="/shop-all-products"
+          element={
+            <Shop
+              carts={carts}
+              quanity={quantity}
+              totalPriceOnCart={totalPrice}
+              onRemoveFromCart={onRemoveFromCart}
+              isOpenCartWhenAdd={isOpenCartWhenAdd}
+              onUpdateCartQuantity={handleUpdateCartQuantity}
+              products={products}
+              productBoxes={productBoxes}
+              onAddToCart={onAddToCart}
+              cartIconRef={cartIconRef}
+            />
+          }
+        />
+        <Route
+          path="/category/:name"
+          element={
+            <Category
+              carts={carts}
+              quanity={quantity}
+              totalPriceOnCart={totalPrice}
+              onRemoveFromCart={onRemoveFromCart}
+              isOpenCartWhenAdd={isOpenCartWhenAdd}
+              onUpdateCartQuantity={handleUpdateCartQuantity}
+              products={products}
+              productBoxes={productBoxes}
+              onAddToCart={onAddToCart}
+              cartIconRef={cartIconRef}
+            />
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <Checkout
+              carts={carts}
+              quantity={quantity}
+              totalPrice={totalPrice}
+              onRemoveFromCart={onRemoveFromCart}
+              onUpdateCartQuantity={handleUpdateCartQuantity}
+            />
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProfilePage
+              carts={carts}
+              quantity={quantity}
+              totalPrice={totalPrice}
+              onRemoveFromCart={onRemoveFromCart}
+              isOpenCartWhenAdd={isOpenCartWhenAdd}
+              cartIconRef={cartIconRef}
+              onUpdateCartQuantity={handleUpdateCartQuantity}
+              products={products}
+            />
+          }
+        />
+      </Routes>
+    </AuthenProvider>
   );
 }

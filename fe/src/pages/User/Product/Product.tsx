@@ -36,10 +36,10 @@ const Product = ({
   const { title } = useParams<{ title: string }>();
   const normalizedTitle = title?.replace(/-/g, " ").toLowerCase().trim();
   const product = products.find(
-    (item) => item.title.toLowerCase().trim() === normalizedTitle
+    (item) => item.name.toLowerCase().trim() === normalizedTitle
   );
   const productBox = productBoxes.find(
-    (item) => item.title.toLowerCase().trim() === normalizedTitle
+    (item) => item.name.toLowerCase().trim() === normalizedTitle
   );
   const currentProduct = product ?? productBox;
   if (!currentProduct) {

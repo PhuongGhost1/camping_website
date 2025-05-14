@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./Header.css";
 import img_logo from "../../assets/logo.png";
-import { ProductFromApi, UserProps } from "../../App";
+import { ProductFromApi } from "../../App";
 import Authentication from "../Authentication/Authentication";
 import Profile from "../Profile/Profile";
+import { useAuthenContext } from "../../hooks/AuthenContext";
 
 interface LinkProps {
   link: string;
@@ -44,10 +45,6 @@ const header: LinkProps[] = [
   },
 ];
 
-const userData: UserProps = {
-  name: "Phuong Hoang",
-};
-
 const Header = ({
   carts,
   quanity,
@@ -67,7 +64,7 @@ const Header = ({
   const [searchValue, setSearchValue] = useState("");
   const [searchResults, setSearchResults] = useState<ProductFromApi[]>([]);
   const isMobile = window.innerWidth <= 768;
-  const [user, setUser] = useState<UserProps | null>(null);
+  const { user } = useAuthenContext();
   const [isOpenUserInfo, setIsOpenUserInfo] = useState(false);
 
   const openLogin = () => {
@@ -80,10 +77,6 @@ const Header = ({
   };
 
   useEffect(() => {
-    if (!user) {
-      setUser(userData);
-    }
-
     const handleScroll = () => {
       setIsOpen(false);
     };
@@ -97,7 +90,7 @@ const Header = ({
 
       return () => clearTimeout(timer);
     }
-  }, [carts, isOpenCartWhenAdd, user]);
+  }, [carts, isOpenCartWhenAdd]);
 
   const handleMenuToggle = () => {
     setIsOpen(!isOpen);
@@ -142,11 +135,13 @@ const Header = ({
         <div className="background" onClick={handleCloseSearch}></div>
       )}
 
-      <Profile
-        user={user}
-        handleOpenUserInfo={handleOpenUserInfo}
-        isOpenUserInfo={isOpenUserInfo}
-      />
+      {user && (
+        <Profile
+          user={user}
+          handleOpenUserInfo={handleOpenUserInfo}
+          isOpenUserInfo={isOpenUserInfo}
+        />
+      )}
       <>
         {isOpenSearch && (
           <div className="search-wrapper">
