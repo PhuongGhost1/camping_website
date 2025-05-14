@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.API.Application.Services;
 
@@ -9,11 +10,17 @@ namespace UserService.API.Application.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserServices _userServices;
-        private readonly IAuthServices _authServices;
-        public UserController(IUserServices userServices, IAuthServices authServices)
+        public UserController(IUserServices userServices)
         {
             _userServices = userServices;
-            _authServices = authServices;
         }
+
+        [Authorize]
+        [HttpGet("user-info")]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            var userId = Guid.Parse(User.Claims.First(u => u.Type == ClaimTypes.NameIdentifier).Value);
+            return await _userServices.GetUserInfo(userId);
+        } 
     }
 }

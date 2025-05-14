@@ -81,7 +81,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
     c =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProductService.API", Version = "v1" });
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserService.API", Version = "v1" });
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             In = ParameterLocation.Header,
@@ -131,6 +131,8 @@ app.UseSwaggerUI();
 
 app.UseCors("AllowAllOrigins");
 app.UseRateLimiter();
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
