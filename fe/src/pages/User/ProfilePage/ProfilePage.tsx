@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ProductFromApi } from "../../../App";
+import { OrderItemProps, ProductFromApi } from "../../../App";
 import "./ProfilePage.css";
 import Header from "../../../components/Header/Header";
 import Footer from "../../../components/Footer/Footer";
@@ -7,7 +7,7 @@ import UserSettings from "./UserSettings/UserSettings";
 import OrderHistory from "./OrderHistory/OrderHistory";
 
 interface ProfilePageProps {
-  carts: ProductFromApi[];
+  carts: OrderItemProps[];
   quantity: number;
   totalPrice: number;
   onRemoveFromCart: (product: ProductFromApi) => void;

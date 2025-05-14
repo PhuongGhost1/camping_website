@@ -3,6 +3,7 @@ import { ProductFromApi } from "../../../../App";
 import ProductDescription from "./ProductDescription/ProductDescription";
 import "./ProductDetail.css";
 import { animateAddToCart } from "../../../../helper/utilities/utilities";
+import { useAuthenContext } from "../../../../hooks/AuthenContext";
 
 interface ProductDetailProps {
   currentProduct: ProductFromApi;
@@ -18,8 +19,15 @@ const ProductDetail = ({
   const [currentQuantity, setCurrentQuantity] = useState<number>(1);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const imgRef = useRef<HTMLImageElement>(null);
+  const { user } = useAuthenContext();
+  const isUserLoggedIn = Boolean(user);
 
   const handleAdded = () => {
+    if (!isUserLoggedIn) {
+      alert("Please login to add items to your cart.");
+      return;
+    }
+
     setIsAdding(true);
 
     setTimeout(() => {

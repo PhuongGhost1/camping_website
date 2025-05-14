@@ -1,11 +1,11 @@
-import { ProductFromApi } from "../../../App";
+import { OrderItemProps, ProductFromApi } from "../../../App";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
 import AllProducts from "./AllProducts/AllProducts";
 import "./Shop.css";
 
 interface ShopProps {
-  carts: ProductFromApi[];
+  carts: OrderItemProps[];
   quanity: number;
   totalPriceOnCart: number;
   onRemoveFromCart: (product: ProductFromApi) => void;

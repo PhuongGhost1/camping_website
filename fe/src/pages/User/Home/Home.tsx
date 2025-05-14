@@ -9,10 +9,10 @@ import Selling from "./Selling/Selling";
 import Brand from "./Brand/Brand";
 import Tips from "./Tips/Tips";
 import ScrollReveal from "scrollreveal";
-import { ProductFromApi } from "../../../App";
+import { OrderItemProps, ProductFromApi } from "../../../App";
 
 interface CommonProps {
-  carts: ProductFromApi[];
+  carts: OrderItemProps[];
   quantity: number;
   totalPrice: number;
   onRemoveFromCart: (product: ProductFromApi) => void;

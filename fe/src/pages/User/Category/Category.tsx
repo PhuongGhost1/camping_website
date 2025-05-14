@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { CategoryProductProps, ProductFromApi } from "../../../App";
+import {
+  CategoryProductProps,
+  OrderItemProps,
+  ProductFromApi,
+} from "../../../App";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
 import "./Category.css";
@@ -8,7 +12,7 @@ import { useParams } from "react-router-dom";
 import { ApiGateway } from "../../../services/api/ApiService";
 
 interface CategoryProps {
-  carts: ProductFromApi[];
+  carts: OrderItemProps[];
   quanity: number;
   totalPriceOnCart: number;
   onRemoveFromCart: (product: ProductFromApi) => void;

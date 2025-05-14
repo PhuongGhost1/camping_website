@@ -19,7 +19,7 @@ function Backpack(): JSX.Element {
           sizes and styles to choose from, these backpacks are perfect for any
           adventure, whether you're hiking, camping, or traveling.
         </p>
-        <a href="#" className="btn">
+        <a href="/product/bags" className="btn">
           <span>View Products</span>
           <img src={img_arrow_right} alt="" />
         </a>

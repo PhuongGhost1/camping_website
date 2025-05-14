@@ -9,9 +9,26 @@ import Checkout from "./pages/User/Checkout/Checkout";
 import ProfilePage from "./pages/User/ProfilePage/ProfilePage";
 import { ApiGateway } from "./services/api/ApiService";
 import AuthenProvider from "./hooks/AuthenContext";
-import { ReactNotifications } from "react-notifications-component";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+export interface OrderProps {
+  id: string;
+  userId: string;
+  totalPrice: number;
+}
+
+export interface OrderItemProps {
+  id: string;
+  orderId: string;
+  productId: string;
+  quantity: number;
+  price: number;
+  product: ProductFromApi;
+}
 
 export interface UserProps {
+  id: string;
   name: string;
   imageUrl: string;
 }
@@ -38,7 +55,7 @@ export interface ProductFromApi {
 }
 
 function App() {
-  const [carts, setCarts] = useState<ProductFromApi[]>([]);
+  const [carts, setCarts] = useState<OrderItemProps[]>([]);
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isOpenCartWhenAdd, setIsOpenCartWhenAdd] = useState(false);
@@ -46,9 +63,31 @@ function App() {
   const [productBoxes, setProductBoxes] = useState<ProductFromApi[]>([]);
   const cartIconRef = useRef<HTMLDivElement>(null);
 
+  const fetchCarts = async () => {
+    try {
+      const data = await ApiGateway.getOrderByUserId<OrderProps>();
+
+      if (data) {
+        const orderId = data.id;
+        const orderProducts = await ApiGateway.getAllOrderProducts<{
+          orderItems: OrderItemProps[];
+        }>(orderId);
+
+        if (orderProducts) {
+          setCarts(orderProducts.orderItems || []);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching carts:", error);
+      setCarts([]);
+    }
+  };
+
   const handleUpdateCartQuantity = (title: string, quantity: number) => {
     setCarts((prev) =>
-      prev.map((item) => (item.name === title ? { ...item, quantity } : item))
+      prev.map((item) =>
+        item.product.name === title ? { ...item, quantity } : item
+      )
     );
   };
 
@@ -56,41 +95,54 @@ function App() {
     product: ProductFromApi,
     numberOfQuantity: number
   ) => {
-    const existing = carts.find((item) => item.name === product.name);
+    const existing = carts.find((item) => item.product.name === product.name);
     if (existing) {
       setCarts(
         carts.map((item) =>
-          item.name === product.name
-            ? { ...item, quantity: (item.stock || 0) + numberOfQuantity }
+          item.product.name === product.name
+            ? { ...item, quantity: (item.quantity || 0) + numberOfQuantity }
             : item
         )
       );
     } else {
-      setCarts([...carts, { ...product, stock: numberOfQuantity }]);
+      const newCartItem: OrderItemProps = {
+        id: crypto.randomUUID(), // Temporary ID until saved to backend
+        orderId: "", // Or fetch current cart order ID if available
+        productId: product.id,
+        quantity: numberOfQuantity,
+        price: product.price,
+        product: product,
+      };
+
+      setCarts([...carts, newCartItem]);
     }
     setIsOpenCartWhenAdd(true);
   };
 
   const handleRemoveFromCart = (product: ProductFromApi) => {
-    const existing = carts.find((item) => item.name === product.name);
+    const existing = carts.find((item) => item.product.name === product.name);
     if (existing) {
-      if (existing.stock && existing.stock > 1) {
+      if (existing.quantity && existing.quantity > 1) {
         setCarts(
           carts.map((item) =>
-            item.name === product.name
-              ? { ...item, quantity: (item.stock || 1) - 1 }
+            item.product.name === product.name
+              ? { ...item, quantity: (item.quantity || 1) - 1 }
               : item
           )
         );
       } else {
         setCarts(
           carts.map((item) =>
-            item.name === product.name ? { ...item, removing: true } : item
+            item.product.name === product.name
+              ? { ...item, removing: true }
+              : item
           )
         );
 
         setTimeout(() => {
-          setCarts((prev) => prev.filter((item) => item.name !== product.name));
+          setCarts((prev) =>
+            prev.filter((item) => item.product.name !== product.name)
+          );
         }, 1000);
       }
     }
@@ -98,6 +150,7 @@ function App() {
 
   useEffect(() => {
     fetchProducts();
+    fetchCarts();
   }, []);
 
   const fetchProducts = async () => {
@@ -127,11 +180,11 @@ function App() {
 
   useEffect(() => {
     const total = carts.reduce((acc, item) => {
-      return acc + Number(item.price) * (item.stock || 1);
+      return acc + Number(item.price) * (item.quantity || 1);
     }, 0);
     setTotalPrice(total);
 
-    const totalQty = carts.reduce((acc, item) => acc + (item.stock || 1), 0);
+    const totalQty = carts.reduce((acc, item) => acc + (item.quantity || 1), 0);
     setQuantity(totalQty);
   }, [carts]);
 
@@ -156,7 +209,7 @@ function App() {
 export default App;
 
 interface RouteProps {
-  carts: ProductFromApi[];
+  carts: OrderItemProps[];
   quantity: number;
   totalPrice: number;
   onRemoveFromCart: (product: ProductFromApi) => void;
@@ -185,7 +238,7 @@ function MainRoutes({
 
   return (
     <AuthenProvider>
-      <ReactNotifications />
+      <ToastContainer position="top-right" autoClose={5000} closeOnClick />
       <Routes location={background || location}>
         <Route
           path="/"

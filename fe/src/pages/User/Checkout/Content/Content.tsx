@@ -3,7 +3,7 @@ import { ProductFromApi } from "../../../../App";
 import "./Content.css";
 
 interface ContentCheckOutProps {
-  carts: ProductFromApi[];
+  carts: OrderItemProps[];
   onRemoveFromCart: (product: ProductFromApi) => void;
   onUpdateCartQuantity: (title: string, quantity: number) => void;
 }

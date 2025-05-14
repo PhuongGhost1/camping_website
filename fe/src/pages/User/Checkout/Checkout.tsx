@@ -1,12 +1,12 @@
 import React from "react";
-import { ProductFromApi } from "../../../App";
+import { OrderItemProps, ProductFromApi } from "../../../App";
 import "./Checkout.css";
 import Footer from "../../../components/Footer/Footer";
 import Content from "./Content/Content";
 import Summary from "./Summary/Summary";
 
 interface CheckoutProps {
-  carts: ProductFromApi[];
+  carts: OrderItemProps[];
   quantity: number;
   totalPrice: number;
   onRemoveFromCart: (product: ProductFromApi) => void;

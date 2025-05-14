@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import "./Authentication.css";
 import LoginSide from "../../assets/login-side.png";
 import { useAuthenContext } from "../../hooks/AuthenContext";
-// import { Store } from "react-notifications-component";
+import { ApiGateway } from "../../services/api/ApiService";
+import { toast } from "react-toastify";
 
 interface AuthenticationProps {
   closeLogin: () => void;
@@ -36,51 +37,37 @@ const Authentication: React.FC<AuthenticationProps> = ({
     const isSuccess = await login(emailInput, passwordInput);
     if (isSuccess) {
       closeLogin();
+      handleLoginSuccess();
     } else {
       setIsWrongSignIn(true);
     }
   };
 
-  // const Register = async () => {
-  // 	const isSuccess = await ApiGateway.SignUp(usernameInput, emailInput, passwordInput)
-  // 	if (isSuccess) {
-  // 		setTypeInput("Login")
-  // 		handleRegisterSuccess();
-  // 	} else {
-  // 		handleRegisterFail();
-  // 	}
-  // }
+  const onClickRegister = async () => {
+    const isSuccess = await ApiGateway.Register(
+      emailInput,
+      passwordInput,
+      usernameInput
+    );
+    if (isSuccess) {
+      setTypeInput("Login");
+      handleRegisterSuccess();
+    } else {
+      handleRegisterFail();
+    }
+  };
 
-  // const handleRegisterSuccess = () => {
-  //   Store.addNotification({
-  //     title: "Register Success",
-  //     message: "Welcome to FreelanceBie",
-  //     type: "success",
-  //     insert: "top",
-  //     container: "top-right",
-  //     animationIn: ["animate__animated", "animate__fadeIn"],
-  //     animationOut: ["animate__animated", "animate__fadeOut"],
-  //     dismiss: {
-  //       duration: 5000,
-  //       onScreen: true,
-  //     },
-  //   });
-  // };
-  // const handleRegisterFail = () => {
-  //   Store.addNotification({
-  //     title: "Register Fail",
-  //     message: "Something go wrong",
-  //     type: "success",
-  //     insert: "top",
-  //     container: "top-right",
-  //     animationIn: ["animate__animated", "animate__fadeIn"],
-  //     animationOut: ["animate__animated", "animate__fadeOut"],
-  //     dismiss: {
-  //       duration: 5000,
-  //       onScreen: true,
-  //     },
-  //   });
-  // };
+  const handleLoginSuccess = () => {
+    toast.success("Login Successfully");
+  };
+
+  const handleRegisterSuccess = () => {
+    toast.success("Welcome To Camping WebSite");
+  };
+
+  const handleRegisterFail = () => {
+    toast.error("Email already exists");
+  };
 
   const ChangeStateType = (value: string) => {
     setTypeInput(value);
@@ -176,7 +163,9 @@ const Authentication: React.FC<AuthenticationProps> = ({
                   value={passwordInput}
                   onChange={onChangePassword}
                 />
-                <button className="sign-in">Sign Up</button>
+                <button className="sign-in" onClick={onClickRegister}>
+                  Sign Up
+                </button>
                 <p className="sign-up">
                   Already have an account{" "}
                   <span

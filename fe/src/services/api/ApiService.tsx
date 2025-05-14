@@ -158,4 +158,79 @@ export class ApiGateway {
       throw error;
     }
   }
+
+  public static async Register<T>(
+    email: string,
+    pwd: string,
+    name: string
+  ): Promise<T | null> {
+    try {
+      const response = await this.axiosInstance.post<T>(`/auth/register`, {
+        name,
+        email,
+        pwd,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error registering:", error);
+      throw error;
+    }
+  }
+
+  public static async getProductById<T>(id: string): Promise<T | null> {
+    try {
+      const response = await this.axiosInstance.get<T>(`/products/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching product by ID:", error);
+      throw error;
+    }
+  }
+
+  public static async getOrderByUserId<T>(): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.get<T>(`/orders/order`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      throw error;
+    }
+  }
+
+  public static async getAllOrderProducts<T>(
+    orderId: string
+  ): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.get<T>(
+        `/orders/all-order-products?orderId=${orderId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching all orders:", error);
+      throw error;
+    }
+  }
+
+  public static async addProductToCart<T>(
+    orderId: string,
+    productId: string,
+    quantity: number,
+    price: number
+  ): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.post<T>(`/orders/add-to-cart`, {
+        orderId,
+        productId,
+        quantity,
+        price,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      throw error;
+    }
+  }
 }

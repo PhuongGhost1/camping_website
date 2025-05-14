@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
-import { ProductFromApi } from "../../../App";
+import { OrderItemProps, ProductFromApi } from "../../../App";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
 import "./Product.css";
 import ProductDetail from "./ProductDetail/ProductDetail";
 
 interface CommonProps {
-  carts: ProductFromApi[];
+  carts: OrderItemProps[];
   quantity: number;
   totalPrice: number;
   onRemoveFromCart: (product: ProductFromApi) => void;

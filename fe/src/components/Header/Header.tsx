@@ -12,7 +12,7 @@ interface LinkProps {
 }
 
 interface HeaderProps {
-  carts: ProductFromApi[];
+  carts: OrderItemProps[];
   quanity: number;
   totalPriceOnCart: number;
   onRemoveFromCart: (item: ProductFromApi) => void;
