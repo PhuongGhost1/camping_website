@@ -34,6 +34,7 @@ public class OrderRepository : IOrderRepository
     public async Task<Orders?> GetOrderById(Guid? orderId)
     {
         return await _dbContext.Orders
+                    .Include(x => x.Orderitems)
                     .FirstOrDefaultAsync(x => x.Id == orderId 
                                         && x.Status == OrderStatusEnum.Processing.ToString());
     }

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrderService.API.Application.DTOs.Order;
 using OrderService.API.Application.DTOs.OrderItem;
 using OrderService.API.Application.Services;
 
@@ -43,6 +44,31 @@ namespace OrderService.API.Application.Controllers
         {
             _logger.LogInformation("Add product to order");
             return await _orderItemService.AddOrderItem(req);
+        }
+
+        [Authorize]
+        [HttpPut("update-order-item")]
+        public async Task<IActionResult> UpdateOrderItem([FromBody] UpdateOrderItemRequest req)
+        {
+            _logger.LogInformation("Update order item");
+            return await _orderItemService.UpdateOrderItem(req);
+        }
+
+        [Authorize]
+        [HttpPost("delete-order-item")]
+        public async Task<IActionResult> DeleteOrderItem([FromBody] DeleteOrderItemRequest req)
+        {
+            _logger.LogInformation("Delete order item");
+            return await _orderItemService.DeleteOrderItem(req);
+        }
+
+        [Authorize]
+        [HttpPut("update-order-total-amount")]
+        public async Task<IActionResult> UpdateOrderTotalAmount([FromBody] UpdateTotalOrderReq req)
+        {
+            _logger.LogInformation("Update order total amount");
+            var userId = Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+            return await _orderService.UpdateOrderTotalAmount(userId, Math.Round(req.TotalAmount, 2));
         }
     }
 }

@@ -4,3 +4,7 @@ public record CreateOrderReq(
     Guid UserId,
     decimal TotalAmount
 );
+
+public record UpdateTotalOrderReq(
+    decimal TotalAmount
+);

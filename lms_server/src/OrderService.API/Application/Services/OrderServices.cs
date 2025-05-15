@@ -11,6 +11,7 @@ public interface IOrderServices
 {
     Task<IActionResult> CreateOrder(CreateOrderReq order);
     Task<IActionResult> GetOrderByUserId(Guid? userId);
+    Task<IActionResult> UpdateOrderTotalAmount(Guid? userId, decimal totalAmount);
 }
 public class OrderServices : IOrderServices
 {
@@ -69,6 +70,26 @@ public class OrderServices : IOrderServices
             }
 
             return SuccessResp.Ok(order);
+        }
+        catch (System.Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> UpdateOrderTotalAmount(Guid? userId, decimal totalAmount)
+    {
+        try
+        {
+            var order = await _orderRepo.GetOrderByUserId(userId);
+            if (order == null)
+                return ErrorResp.NotFound("Order not found!");
+
+            order.TotalAmount = totalAmount;
+            var isUpdated = await _orderRepo.UpdateOrder(order);
+            if (!isUpdated) return ErrorResp.BadRequest("Failed to update order!");
+
+            return SuccessResp.Ok("Order updated successfully!");    
         }
         catch (System.Exception)
         {
