@@ -3,9 +3,14 @@ using System.Text.Json.Serialization;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PaymentService.API.Application.Services;
 using PaymentService.API.Application.Shared.Constant;
+using PaymentService.API.Infrastructure.Database;
+using PaymentService.API.Infrastructure.Messaging.Publisher;
+using PaymentService.API.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 string envPath = Path.GetFullPath(Path.Combine
@@ -76,7 +81,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
     c =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProductService.API", Version = "v1" });
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "PaymentService.API", Version = "v1" });
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             In = ParameterLocation.Header,
@@ -109,11 +114,16 @@ builder.Services.AddSwaggerGen(
 //     return ConnectionMultiplexer.Connect(configuration);
 // });
 
-// builder.Services.AddDbContext<CampingDbContext>(options =>
-// {
-//     Console.WriteLine($"Using ConnectionString: {MySQLDatabase.DB_CONNECTION_STRING}");
-//     options.UseMySql(MySQLDatabase.DB_CONNECTION_STRING, ServerVersion.Parse("8.0.34-mysql"));
-// });
+builder.Services.AddDbContext<CampingDbContext>(options =>
+{
+    options.UseMySql(MySQLDatabase.DB_CONNECTION_STRING, ServerVersion.Parse("8.0.34-mysql"));
+});
+
+builder.Services.AddScoped<IPaymentServices, PaymentServices>();
+
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+
+builder.Services.AddSingleton<IEventPublisher, EventPublisher>();
 
 var app = builder.Build();
 

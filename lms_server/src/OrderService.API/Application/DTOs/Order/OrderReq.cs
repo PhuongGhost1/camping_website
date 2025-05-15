@@ -8,3 +8,8 @@ public record CreateOrderReq(
 public record UpdateTotalOrderReq(
     decimal TotalAmount
 );
+
+public record PublishOrderReq(
+    Guid OrderId,
+    decimal TotalAmount
+);

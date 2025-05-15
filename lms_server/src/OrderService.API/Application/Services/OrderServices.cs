@@ -54,21 +54,6 @@ public class OrderServices : IOrderServices
             if (order == null)
                 return ErrorResp.NotFound("Order not found!");
 
-            var isExist = await _orderRepo.CheckIfExistProcessingOrder(userId);
-            if(!isExist)
-            {
-                var orderObj = new Orders
-                {
-                    UserId = order.UserId,
-                    TotalAmount = order.TotalAmount,
-                    Status = OrderStatusEnum.Processing.ToString(),
-                    CreatedAt = DateTime.UtcNow
-                };
-
-                var isCreated = await _orderRepo.CreateOrder(orderObj);
-                if (!isCreated) return ErrorResp.BadRequest("Failed to create order!"); 
-            }
-
             return SuccessResp.Ok(order);
         }
         catch (System.Exception)

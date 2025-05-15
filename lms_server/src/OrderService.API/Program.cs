@@ -126,6 +126,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 
 builder.Services.AddHostedService<RegisterEventConsumer>();
+builder.Services.AddHostedService<PaymentCompletedEvent>();
 
 var app = builder.Build();
 
