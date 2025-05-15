@@ -233,4 +233,64 @@ export class ApiGateway {
       throw error;
     }
   }
+
+  public static async updateProductInCart<T>(
+    productId: string,
+    orderId: string,
+    quantity: number,
+    actualPrice: number
+  ): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.put<T>(
+        `/orders/update-order-item`,
+        {
+          productId,
+          orderId,
+          quantity,
+          actualPrice,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating product in cart:", error);
+      throw error;
+    }
+  }
+
+  public static async removeProductFromCart<T>(
+    orderId: string,
+    productId: string
+  ): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.post<T>(
+        `/orders/delete-order-item`,
+        {
+          orderId,
+          productId,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error removing product from cart:", error);
+      throw error;
+    }
+  }
+
+  public static async updateTotalAmount(totalAmount: number): Promise<any> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.put(
+        `/orders/update-order-total-amount`,
+        {
+          totalAmount,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating total amount:", error);
+      throw error;
+    }
+  }
 }

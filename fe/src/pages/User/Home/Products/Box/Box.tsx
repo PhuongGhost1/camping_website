@@ -2,15 +2,16 @@ import { useNavigate } from "react-router-dom";
 import "./Box.css";
 import { animateAddToCart } from "../../../../../helper/utilities/utilities";
 import { useRef } from "react";
-import { ProductFromApi } from "../../../../../App";
+import { ProductFromApi, UserProps } from "../../../../../App";
 
 interface BoxProps {
   product: ProductFromApi;
   handleAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef?: React.RefObject<HTMLDivElement>;
+  user: UserProps | null;
 }
 
-const Box = ({ product, handleAddToCart, cartIconRef }: BoxProps) => {
+const Box = ({ product, handleAddToCart, cartIconRef, user }: BoxProps) => {
   const { name, imageUrl, price } = product;
   const navigate = useNavigate();
   const imgRef = useRef<HTMLImageElement>(null);
@@ -21,7 +22,7 @@ const Box = ({ product, handleAddToCart, cartIconRef }: BoxProps) => {
 
   const handleAddToCartClick = () => {
     handleAddToCart(product, 1);
-    if (imgRef?.current && cartIconRef?.current) {
+    if (user && imgRef?.current && cartIconRef?.current) {
       animateAddToCart(imgRef.current, cartIconRef.current);
     }
   };

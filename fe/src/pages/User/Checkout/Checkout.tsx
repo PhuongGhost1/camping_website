@@ -10,7 +10,7 @@ interface CheckoutProps {
   quantity: number;
   totalPrice: number;
   onRemoveFromCart: (product: ProductFromApi) => void;
-  onUpdateCartQuantity: (title: string, quantity: number) => void;
+  onUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
 }
 
 const Checkout: React.FC<CheckoutProps> = ({

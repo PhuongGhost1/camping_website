@@ -1,17 +1,19 @@
 import "./Products.css";
 import Box from "./Box/Box";
-import { ProductFromApi } from "../../../../App";
+import { ProductFromApi, UserProps } from "../../../../App";
 
 interface ProductsBoxProps {
   productBoxes: ProductFromApi[];
   onAddToCart: (item: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef?: React.RefObject<HTMLDivElement>;
+  user: UserProps | null;
 }
 
 const Products = ({
   productBoxes,
   onAddToCart,
   cartIconRef,
+  user,
 }: ProductsBoxProps) => {
   return (
     <section className="products container" id="products">
@@ -31,6 +33,7 @@ const Products = ({
             product={product}
             handleAddToCart={onAddToCart}
             cartIconRef={cartIconRef}
+            user={user}
           />
         ))}
       </div>

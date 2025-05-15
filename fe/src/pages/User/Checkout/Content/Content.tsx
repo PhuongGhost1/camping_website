@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { ProductFromApi } from "../../../../App";
+import { OrderItemProps, ProductFromApi } from "../../../../App";
 import "./Content.css";
 
 interface ContentCheckOutProps {
   carts: OrderItemProps[];
   onRemoveFromCart: (product: ProductFromApi) => void;
-  onUpdateCartQuantity: (title: string, quantity: number) => void;
+  onUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
 }
 
 const Content: React.FC<ContentCheckOutProps> = ({
@@ -18,21 +18,30 @@ const Content: React.FC<ContentCheckOutProps> = ({
   );
 
   const totalPriceOfItem = (product: ProductFromApi) => {
-    const currentProduct = carts.find((item) => item.title === product.title);
+    const currentProduct = carts.find(
+      (item) => item.product.name === product.name
+    );
     if (currentProduct) {
-      return Number(product.salePrice) * (currentProduct.quantity || 1);
+      return Number(product.price) * (currentProduct.quantity || 1);
     }
     return 0;
   };
 
-  const handleQuantityChange = (title: string, accumator: string) => {
-    const currentProduct = carts.find((item) => item.title === title);
+  const handleQuantityChange = (
+    product: ProductFromApi,
+    orderId: string,
+    productId: string,
+    accumator: string
+  ) => {
+    const currentProduct = carts.find(
+      (item) => item.orderId === orderId && item.productId === productId
+    );
     if (currentProduct) {
       const newQuantity =
         accumator === "+"
           ? (currentProduct.quantity || 1) + 1
           : (currentProduct.quantity || 1) - 1;
-      onUpdateCartQuantity(title, newQuantity);
+      onUpdateCartQuantity(product, newQuantity);
     }
   };
 
@@ -49,18 +58,21 @@ const Content: React.FC<ContentCheckOutProps> = ({
         <p>Total</p>
       </div>
       {carts.length > 0 ? (
-        carts.map((product, index) => (
+        carts.map((orderItem, index) => (
           <div key={index} className="checkout-product">
             <div className="checkout-product-info">
-              <img src={product.image} alt={product.title} />
+              <img
+                src={orderItem.product.imageUrl}
+                alt={orderItem.product.name}
+              />
               <div className="product-info-item">
-                <h2>{product.title}</h2>
+                <h2>{orderItem.product.name}</h2>
                 <p>Color: Seafoam</p>
                 <p>Size: 36 fl oz</p>
                 <p>Item: 2484770001</p>
                 <div className="button">
                   <button className="btn-save">Save for later</button>
-                  <button onClick={() => onRemoveFromCart(product)}>
+                  <button onClick={() => onRemoveFromCart(orderItem.product)}>
                     Remove
                   </button>
                 </div>
@@ -71,25 +83,39 @@ const Content: React.FC<ContentCheckOutProps> = ({
                 <div className="change-quantity">
                   <button
                     className="btn-minus"
-                    onClick={() => handleQuantityChange(product.title, "-")}
+                    onClick={() =>
+                      handleQuantityChange(
+                        orderItem.product,
+                        orderItem.orderId,
+                        orderItem.productId,
+                        "-"
+                      )
+                    }
                   >
                     -
                   </button>
                   <input
                     type="number"
-                    value={product.quantity || 1}
+                    value={orderItem.quantity}
                     min={1}
                     readOnly
                   />
                   <button
                     className="btn-plus"
-                    onClick={() => handleQuantityChange(product.title, "+")}
+                    onClick={() =>
+                      handleQuantityChange(
+                        orderItem.product,
+                        orderItem.orderId,
+                        orderItem.productId,
+                        "+"
+                      )
+                    }
                   >
                     +
                   </button>
                 </div>
-                <h3>${product.salePrice.toFixed(2)}</h3>
-                <span>${totalPriceOfItem(product).toFixed(2)} </span>
+                <h3>${orderItem.price.toFixed(2)}</h3>
+                <span>${totalPriceOfItem(orderItem.product).toFixed(2)} </span>
               </div>
               <div className="kind-transport">
                 <div>

@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { OrderItemProps, ProductFromApi } from "../../../App";
+import { OrderItemProps, ProductFromApi, UserProps } from "../../../App";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
 import "./Product.css";
@@ -12,8 +12,9 @@ interface CommonProps {
   onRemoveFromCart: (product: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
   onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
-  onUpdateCartQuantity: (title: string, quantity: number) => void;
+  onUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
+  user: UserProps | null;
 }
 
 interface ProductPageProps extends CommonProps {
@@ -32,6 +33,7 @@ const Product = ({
   productBoxes,
   onUpdateCartQuantity,
   cartIconRef,
+  user,
 }: ProductPageProps) => {
   const { title } = useParams<{ title: string }>();
   const normalizedTitle = title?.replace(/-/g, " ").toLowerCase().trim();
@@ -57,6 +59,7 @@ const Product = ({
         onUpdateCartQuantity={onUpdateCartQuantity}
         cartIconRef={cartIconRef}
         sellingProducts={products}
+        user={user}
       />
 
       <ProductDetail

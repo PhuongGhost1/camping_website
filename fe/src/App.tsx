@@ -8,9 +8,9 @@ import Category from "./pages/User/Category/Category";
 import Checkout from "./pages/User/Checkout/Checkout";
 import ProfilePage from "./pages/User/ProfilePage/ProfilePage";
 import { ApiGateway } from "./services/api/ApiService";
-import AuthenProvider from "./hooks/AuthenContext";
-import { ToastContainer } from "react-toastify";
+import { useAuthenContext } from "./hooks/AuthenContext";
 import "react-toastify/dist/ReactToastify.css";
+import { useCart } from "./hooks/useCart";
 
 export interface OrderProps {
   id: string;
@@ -18,13 +18,19 @@ export interface OrderProps {
   totalPrice: number;
 }
 
-export interface OrderItemProps {
+export interface RawOrderItem {
   id: string;
   orderId: string;
   productId: string;
   quantity: number;
   price: number;
+  status: string;
+  order?: OrderProps;
+}
+
+export interface OrderItemProps extends RawOrderItem {
   product: ProductFromApi;
+  removing?: boolean;
 }
 
 export interface UserProps {
@@ -55,102 +61,85 @@ export interface ProductFromApi {
 }
 
 function App() {
-  const [carts, setCarts] = useState<OrderItemProps[]>([]);
-  const [quantity, setQuantity] = useState(0);
-  const [totalPrice, setTotalPrice] = useState(0);
   const [isOpenCartWhenAdd, setIsOpenCartWhenAdd] = useState(false);
   const [products, setProducts] = useState<ProductFromApi[]>([]);
   const [productBoxes, setProductBoxes] = useState<ProductFromApi[]>([]);
   const cartIconRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuthenContext();
+  const { carts, setCarts, totalPrice, quantity, uniqueOrderId, fetchCarts } =
+    useCart(user as UserProps);
 
-  const fetchCarts = async () => {
+  const handleUpdateCartQuantity = async (
+    product: ProductFromApi,
+    quantity: number
+  ) => {
+    if (!user) {
+      alert("You need to login to update the product quantity");
+      return;
+    }
+
     try {
-      const data = await ApiGateway.getOrderByUserId<OrderProps>();
-
-      if (data) {
-        const orderId = data.id;
-        const orderProducts = await ApiGateway.getAllOrderProducts<{
-          orderItems: OrderItemProps[];
-        }>(orderId);
-
-        if (orderProducts) {
-          setCarts(orderProducts.orderItems || []);
-        }
-      }
+      await ApiGateway.updateProductInCart(
+        product.id,
+        uniqueOrderId!,
+        quantity,
+        product.price
+      );
+      await fetchCarts();
     } catch (error) {
-      console.error("Error fetching carts:", error);
-      setCarts([]);
+      console.error("Error updating quantity:", error);
     }
   };
 
-  const handleUpdateCartQuantity = (title: string, quantity: number) => {
-    setCarts((prev) =>
-      prev.map((item) =>
-        item.product.name === title ? { ...item, quantity } : item
-      )
-    );
-  };
-
-  const handleAddToCart = (
+  const handleAddToCart = async (
     product: ProductFromApi,
     numberOfQuantity: number
   ) => {
-    const existing = carts.find((item) => item.product.name === product.name);
-    if (existing) {
-      setCarts(
-        carts.map((item) =>
-          item.product.name === product.name
-            ? { ...item, quantity: (item.quantity || 0) + numberOfQuantity }
-            : item
-        )
-      );
-    } else {
-      const newCartItem: OrderItemProps = {
-        id: crypto.randomUUID(), // Temporary ID until saved to backend
-        orderId: "", // Or fetch current cart order ID if available
-        productId: product.id,
-        quantity: numberOfQuantity,
-        price: product.price,
-        product: product,
-      };
-
-      setCarts([...carts, newCartItem]);
+    if (!user) {
+      alert("You need to login to add the product to cart");
+      return;
     }
+
+    await ApiGateway.addProductToCart(
+      uniqueOrderId!,
+      product.id,
+      numberOfQuantity,
+      product.price
+    );
+
+    await fetchCarts();
+
     setIsOpenCartWhenAdd(true);
   };
 
   const handleRemoveFromCart = (product: ProductFromApi) => {
-    const existing = carts.find((item) => item.product.name === product.name);
-    if (existing) {
-      if (existing.quantity && existing.quantity > 1) {
-        setCarts(
-          carts.map((item) =>
-            item.product.name === product.name
-              ? { ...item, quantity: (item.quantity || 1) - 1 }
-              : item
-          )
-        );
-      } else {
-        setCarts(
-          carts.map((item) =>
-            item.product.name === product.name
-              ? { ...item, removing: true }
-              : item
-          )
+    if (!user) {
+      alert("You need to login to remove the product from cart");
+      return;
+    }
+
+    const existing = carts.find((item) => item.product.id === product.id);
+    if (!existing) return;
+
+    if (existing.quantity && existing.quantity > 0) {
+      setCarts((prev) =>
+        prev.map((item) =>
+          item.product.id === product.id ? { ...item, removing: true } : item
+        )
+      );
+
+      setTimeout(() => {
+        setCarts((prev) =>
+          prev.filter((item) => item.product.id !== product.id)
         );
 
-        setTimeout(() => {
-          setCarts((prev) =>
-            prev.filter((item) => item.product.name !== product.name)
-          );
-        }, 1000);
-      }
+        ApiGateway.removeProductFromCart(uniqueOrderId!, product.id);
+      }, 1000);
     }
   };
 
   useEffect(() => {
     fetchProducts();
-    fetchCarts();
   }, []);
 
   const fetchProducts = async () => {
@@ -178,16 +167,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const total = carts.reduce((acc, item) => {
-      return acc + Number(item.price) * (item.quantity || 1);
-    }, 0);
-    setTotalPrice(total);
-
-    const totalQty = carts.reduce((acc, item) => acc + (item.quantity || 1), 0);
-    setQuantity(totalQty);
-  }, [carts]);
-
   return (
     <BrowserRouter>
       <MainRoutes
@@ -201,6 +180,7 @@ function App() {
         productBoxes={productBoxes}
         handleUpdateCartQuantity={handleUpdateCartQuantity}
         cartIconRef={cartIconRef as React.RefObject<HTMLDivElement>}
+        user={user}
       />
     </BrowserRouter>
   );
@@ -217,8 +197,9 @@ interface RouteProps {
   onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   products: ProductFromApi[];
   productBoxes: ProductFromApi[];
-  handleUpdateCartQuantity: (title: string, quantity: number) => void;
+  handleUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
+  user: UserProps | null;
 }
 
 function MainRoutes({
@@ -232,110 +213,113 @@ function MainRoutes({
   productBoxes,
   handleUpdateCartQuantity,
   cartIconRef,
+  user,
 }: RouteProps) {
   const location = useLocation();
   const background = location.state?.background;
 
   return (
-    <AuthenProvider>
-      <ToastContainer position="top-right" autoClose={5000} closeOnClick />
-      <Routes location={background || location}>
-        <Route
-          path="/"
-          element={
-            <Home
-              carts={carts}
-              quantity={quantity}
-              totalPrice={totalPrice}
-              onRemoveFromCart={onRemoveFromCart}
-              isOpenCartWhenAdd={isOpenCartWhenAdd}
-              onAddToCart={onAddToCart}
-              products={products}
-              productBoxes={productBoxes}
-              onUpdateCartQuantity={handleUpdateCartQuantity}
-              cartIconRef={cartIconRef}
-            />
-          }
-        />
-        <Route
-          path="/product/:title"
-          element={
-            <Product
-              carts={carts}
-              quantity={quantity}
-              totalPrice={totalPrice}
-              onRemoveFromCart={onRemoveFromCart}
-              isOpenCartWhenAdd={isOpenCartWhenAdd}
-              onAddToCart={onAddToCart}
-              products={products}
-              productBoxes={productBoxes}
-              onUpdateCartQuantity={handleUpdateCartQuantity}
-              cartIconRef={cartIconRef}
-            />
-          }
-        />
-        <Route
-          path="/shop-all-products"
-          element={
-            <Shop
-              carts={carts}
-              quanity={quantity}
-              totalPriceOnCart={totalPrice}
-              onRemoveFromCart={onRemoveFromCart}
-              isOpenCartWhenAdd={isOpenCartWhenAdd}
-              onUpdateCartQuantity={handleUpdateCartQuantity}
-              products={products}
-              productBoxes={productBoxes}
-              onAddToCart={onAddToCart}
-              cartIconRef={cartIconRef}
-            />
-          }
-        />
-        <Route
-          path="/category/:name"
-          element={
-            <Category
-              carts={carts}
-              quanity={quantity}
-              totalPriceOnCart={totalPrice}
-              onRemoveFromCart={onRemoveFromCart}
-              isOpenCartWhenAdd={isOpenCartWhenAdd}
-              onUpdateCartQuantity={handleUpdateCartQuantity}
-              products={products}
-              productBoxes={productBoxes}
-              onAddToCart={onAddToCart}
-              cartIconRef={cartIconRef}
-            />
-          }
-        />
-        <Route
-          path="/checkout"
-          element={
-            <Checkout
-              carts={carts}
-              quantity={quantity}
-              totalPrice={totalPrice}
-              onRemoveFromCart={onRemoveFromCart}
-              onUpdateCartQuantity={handleUpdateCartQuantity}
-            />
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProfilePage
-              carts={carts}
-              quantity={quantity}
-              totalPrice={totalPrice}
-              onRemoveFromCart={onRemoveFromCart}
-              isOpenCartWhenAdd={isOpenCartWhenAdd}
-              cartIconRef={cartIconRef}
-              onUpdateCartQuantity={handleUpdateCartQuantity}
-              products={products}
-            />
-          }
-        />
-      </Routes>
-    </AuthenProvider>
+    <Routes location={background || location}>
+      <Route
+        path="/"
+        element={
+          <Home
+            carts={carts}
+            quantity={quantity}
+            totalPrice={totalPrice}
+            onRemoveFromCart={onRemoveFromCart}
+            isOpenCartWhenAdd={isOpenCartWhenAdd}
+            onAddToCart={onAddToCart}
+            products={products}
+            productBoxes={productBoxes}
+            onUpdateCartQuantity={handleUpdateCartQuantity}
+            cartIconRef={cartIconRef}
+            user={user}
+          />
+        }
+      />
+      <Route
+        path="/product/:title"
+        element={
+          <Product
+            carts={carts}
+            quantity={quantity}
+            totalPrice={totalPrice}
+            onRemoveFromCart={onRemoveFromCart}
+            isOpenCartWhenAdd={isOpenCartWhenAdd}
+            onAddToCart={onAddToCart}
+            products={products}
+            productBoxes={productBoxes}
+            onUpdateCartQuantity={handleUpdateCartQuantity}
+            cartIconRef={cartIconRef}
+            user={user}
+          />
+        }
+      />
+      <Route
+        path="/shop-all-products"
+        element={
+          <Shop
+            carts={carts}
+            quanity={quantity}
+            totalPriceOnCart={totalPrice}
+            onRemoveFromCart={onRemoveFromCart}
+            isOpenCartWhenAdd={isOpenCartWhenAdd}
+            onUpdateCartQuantity={handleUpdateCartQuantity}
+            products={products}
+            productBoxes={productBoxes}
+            onAddToCart={onAddToCart}
+            cartIconRef={cartIconRef}
+            user={user}
+          />
+        }
+      />
+      <Route
+        path="/category/:name"
+        element={
+          <Category
+            carts={carts}
+            quanity={quantity}
+            totalPriceOnCart={totalPrice}
+            onRemoveFromCart={onRemoveFromCart}
+            isOpenCartWhenAdd={isOpenCartWhenAdd}
+            onUpdateCartQuantity={handleUpdateCartQuantity}
+            products={products}
+            productBoxes={productBoxes}
+            onAddToCart={onAddToCart}
+            cartIconRef={cartIconRef}
+            user={user}
+          />
+        }
+      />
+      <Route
+        path="/checkout"
+        element={
+          <Checkout
+            carts={carts}
+            quantity={quantity}
+            totalPrice={totalPrice}
+            onRemoveFromCart={onRemoveFromCart}
+            onUpdateCartQuantity={handleUpdateCartQuantity}
+          />
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProfilePage
+            carts={carts}
+            quantity={quantity}
+            totalPrice={totalPrice}
+            onRemoveFromCart={onRemoveFromCart}
+            isOpenCartWhenAdd={isOpenCartWhenAdd}
+            cartIconRef={cartIconRef}
+            onUpdateCartQuantity={handleUpdateCartQuantity}
+            products={products}
+            user={user}
+          />
+        }
+      />
+    </Routes>
   );
 }

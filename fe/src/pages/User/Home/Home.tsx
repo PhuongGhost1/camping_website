@@ -9,7 +9,7 @@ import Selling from "./Selling/Selling";
 import Brand from "./Brand/Brand";
 import Tips from "./Tips/Tips";
 import ScrollReveal from "scrollreveal";
-import { OrderItemProps, ProductFromApi } from "../../../App";
+import { OrderItemProps, ProductFromApi, UserProps } from "../../../App";
 
 interface CommonProps {
   carts: OrderItemProps[];
@@ -20,8 +20,9 @@ interface CommonProps {
   onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   products: ProductFromApi[];
   productBoxes: ProductFromApi[];
-  onUpdateCartQuantity: (title: string, quantity: number) => void;
+  onUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
+  user: UserProps | null;
 }
 
 function Home({
@@ -35,6 +36,7 @@ function Home({
   productBoxes,
   onUpdateCartQuantity,
   cartIconRef,
+  user,
 }: CommonProps): JSX.Element {
   useEffect(() => {
     const animate = ScrollReveal({
@@ -74,6 +76,7 @@ function Home({
         onUpdateCartQuantity={onUpdateCartQuantity}
         cartIconRef={cartIconRef}
         sellingProducts={products}
+        user={user}
       />
 
       <Hero />
@@ -82,6 +85,7 @@ function Home({
         productBoxes={productBoxes}
         onAddToCart={onAddToCart}
         cartIconRef={cartIconRef}
+        user={user}
       />
 
       <Backpack />
@@ -90,6 +94,7 @@ function Home({
         sellingProducts={products}
         onAddToCart={onAddToCart}
         cartIconRef={cartIconRef}
+        user={user}
       />
 
       <Brand />

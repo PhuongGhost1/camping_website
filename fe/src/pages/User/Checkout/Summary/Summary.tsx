@@ -36,7 +36,7 @@ const Summary: React.FC<SummaryProps> = ({ totalPrice }) => {
         <div className="order-total">
           <div className="details">
             <p>SubTotal</p>
-            <p>${totalPrice}</p>
+            <p>${totalPrice.toFixed(2)}</p>
           </div>
           <div className="details">
             <p>Standard shipping</p>
@@ -66,7 +66,7 @@ const Summary: React.FC<SummaryProps> = ({ totalPrice }) => {
           </div>
           <div className="details">
             <p>Order total</p>
-            <p>${totalPrice}</p>
+            <p>${totalPrice.toFixed(2)}</p>
           </div>
         </div>
       </div>

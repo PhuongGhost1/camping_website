@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./Header.css";
 import img_logo from "../../assets/logo.png";
-import { ProductFromApi } from "../../App";
+import { OrderItemProps, ProductFromApi, UserProps } from "../../App";
 import Authentication from "../Authentication/Authentication";
 import Profile from "../Profile/Profile";
-import { useAuthenContext } from "../../hooks/AuthenContext";
+import { useNavigate } from "react-router-dom";
 
 interface LinkProps {
   link: string;
@@ -17,9 +17,10 @@ interface HeaderProps {
   totalPriceOnCart: number;
   onRemoveFromCart: (item: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
-  onUpdateCartQuantity: (title: string, quantity: number) => void;
+  onUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
   sellingProducts: ProductFromApi[];
+  user: UserProps | null;
 }
 
 const header: LinkProps[] = [
@@ -54,6 +55,7 @@ const Header = ({
   onUpdateCartQuantity,
   cartIconRef,
   sellingProducts,
+  user,
 }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenCart, setIsOpenCart] = useState(false);
@@ -64,8 +66,8 @@ const Header = ({
   const [searchValue, setSearchValue] = useState("");
   const [searchResults, setSearchResults] = useState<ProductFromApi[]>([]);
   const isMobile = window.innerWidth <= 768;
-  const { user } = useAuthenContext();
   const [isOpenUserInfo, setIsOpenUserInfo] = useState(false);
+  const navigate = useNavigate();
 
   const openLogin = () => {
     setIsLoginOpen(true);
@@ -97,7 +99,12 @@ const Header = ({
   };
 
   const handleCartToggle = () => {
-    setIsOpenCart(!isOpenCart);
+    if (!user) {
+      setIsOpenCart(false);
+      navigate("/");
+    } else {
+      setIsOpenCart(!isOpenCart);
+    }
   };
 
   const handleSearchToggle = () => {
@@ -233,51 +240,56 @@ const Header = ({
             {carts.length > 0 ? (
               <>
                 <div className="cart-list-container">
-                  {carts.map((item: ProductFromApi, index: number) => (
-                    <div
-                      key={index}
-                      className={
-                        "cart-item-row" + (item.removing ? " blink-out" : "")
-                      }
-                    >
-                      <div className="cart-item-img-wrapper">
-                        <img src={item.imageUrl} alt={item.name} />
-                        <div className="cart-item-quantity-wrapper">
-                          <p>Qty</p>
-                          <input
-                            type="number"
-                            min={1}
-                            value={item.stock || 1}
-                            onChange={(e) => {
-                              const value = e.target.value.replace(
-                                /[^0-9]/g,
-                                ""
-                              );
-                              const numericValue = Math.max(1, Number(value));
-                              onUpdateCartQuantity(item.name, numericValue);
-                            }}
-                          />
+                  {carts.map((item: OrderItemProps, index: number) => {
+                    const product = item.product;
+                    if (!product) return null;
+
+                    return (
+                      <div
+                        key={index}
+                        className={
+                          "cart-item-row" + (item.removing ? " blink-out" : "")
+                        }
+                      >
+                        <div className="cart-item-img-wrapper">
+                          <img src={product.imageUrl} alt={product.name} />
+                          <div className="cart-item-quantity-wrapper">
+                            <p>Qty</p>
+                            <input
+                              type="number"
+                              min={1}
+                              value={item.quantity || 1}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /[^0-9]/g,
+                                  ""
+                                );
+                                const numericValue = Math.max(1, Number(value));
+                                onUpdateCartQuantity(product, numericValue);
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="cart-item-details">
+                          <div>
+                            <h3>{product.name}</h3>
+                            <p>$ {product.price} USD</p>
+                          </div>
+                          <button
+                            className="btn-remove"
+                            onClick={() => onRemoveFromCart(product)}
+                          >
+                            Remove
+                          </button>
                         </div>
                       </div>
-                      <div className="cart-item-details">
-                        <div>
-                          <h3>{item.name}</h3>
-                          <p>$ {item.price} USD</p>
-                        </div>
-                        <button
-                          className="btn-remove"
-                          onClick={() => onRemoveFromCart(item)}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 <div className="cart-footer">
                   <div>
                     <p>SubTotal</p>
-                    <span>$ {totalPriceOnCart} USD</span>
+                    <span>$ {totalPriceOnCart.toFixed(2)} USD</span>
                   </div>
                   <a href="/checkout" className="btn">
                     Continue to checkout

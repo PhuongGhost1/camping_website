@@ -3,6 +3,7 @@ import {
   CategoryProductProps,
   OrderItemProps,
   ProductFromApi,
+  UserProps,
 } from "../../../App";
 import Footer from "../../../components/Footer/Footer";
 import Header from "../../../components/Header/Header";
@@ -17,11 +18,12 @@ interface CategoryProps {
   totalPriceOnCart: number;
   onRemoveFromCart: (product: ProductFromApi) => void;
   isOpenCartWhenAdd: boolean;
-  onUpdateCartQuantity: (title: string, quantity: number) => void;
+  onUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
   products: ProductFromApi[];
   productBoxes: ProductFromApi[];
   onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
+  user: UserProps | null;
 }
 
 const Category: React.FC<CategoryProps> = ({
@@ -34,6 +36,7 @@ const Category: React.FC<CategoryProps> = ({
   cartIconRef,
   products,
   onAddToCart,
+  user,
 }) => {
   const { name } = useParams<string>();
   const [isOpenSort, setIsOpenSort] = useState(false);
@@ -95,6 +98,7 @@ const Category: React.FC<CategoryProps> = ({
         onUpdateCartQuantity={onUpdateCartQuantity}
         cartIconRef={cartIconRef}
         sellingProducts={products}
+        user={user}
       />
 
       <div className="product-category container">
@@ -146,6 +150,7 @@ const Category: React.FC<CategoryProps> = ({
               product={product}
               handleAddToCart={onAddToCart}
               cartIconRef={cartIconRef}
+              user={user}
             />
           ))}
         </div>

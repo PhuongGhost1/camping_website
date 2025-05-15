@@ -13,24 +13,26 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import Box from "../Products/Box/Box";
-import { ProductFromApi } from "../../../../App";
+import { ProductFromApi, UserProps } from "../../../../App";
 
 interface SellingProps {
   sellingProducts: ProductFromApi[];
   onAddToCart: (product: ProductFromApi, numberOfQuantity: number) => void;
   cartIconRef?: React.RefObject<HTMLDivElement>;
+  user: UserProps | null;
 }
 
 const Selling = ({
   sellingProducts,
   onAddToCart,
   cartIconRef,
+  user,
 }: SellingProps) => {
   return (
     <section className="selling container" id="selling">
       <div className="selling-heading">
         <h2>Best Selling</h2>
-        <a href="#" className="btn">
+        <a href="/shop-all-products" className="btn">
           <span>View Products</span>
           <img src={img_arrow_right} alt="" />
         </a>
@@ -71,6 +73,7 @@ const Selling = ({
                 product={product}
                 handleAddToCart={onAddToCart}
                 cartIconRef={cartIconRef}
+                user={user}
               />
             </SwiperSlide>
           ))}
