@@ -11,6 +11,7 @@ import { ApiGateway } from "./services/api/ApiService";
 import { useAuthenContext } from "./hooks/AuthenContext";
 import "react-toastify/dist/ReactToastify.css";
 import { useCart } from "./hooks/useCart";
+import { toast } from "react-toastify";
 
 export interface OrderProps {
   id: string;
@@ -69,6 +70,14 @@ function App() {
   const { carts, setCarts, totalPrice, quantity, uniqueOrderId, fetchCarts } =
     useCart(user as UserProps);
 
+  const handleAddToCartSuccess = () => {
+    toast.success("Product added to cart successfully!");
+  };
+
+  const handleRemoveFromCartSuccess = () => {
+    toast.success("Product removed from cart successfully!");
+  };
+
   const handleUpdateCartQuantity = async (
     product: ProductFromApi,
     quantity: number
@@ -110,6 +119,8 @@ function App() {
     await fetchCarts();
 
     setIsOpenCartWhenAdd(true);
+
+    handleAddToCartSuccess();
   };
 
   const handleRemoveFromCart = (product: ProductFromApi) => {
@@ -136,6 +147,8 @@ function App() {
         ApiGateway.removeProductFromCart(uniqueOrderId!, product.id);
       }, 1000);
     }
+
+    handleRemoveFromCartSuccess();
   };
 
   useEffect(() => {
