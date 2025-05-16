@@ -12,12 +12,46 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using AuthenticationService.API.Infrastructure.Messaging.Publisher;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string envPath = Path.GetFullPath(Path.Combine
             (AppDomain.CurrentDomain.BaseDirectory, "../../../../../../lms_server/.env"));
 Env.Load(envPath);
+
+string rabbitHost = RabbitMQConst.RABBITMQ_HOST!;
+string rabbitPort = RabbitMQConst.RABBITMQ_PORT!;
+string rabbitUser = RabbitMQConst.RABBITMQ_USERNAME!;
+string rabbitPass = RabbitMQConst.RABBITMQ_PASSWORD!;
+
+// Tạo RabbitMQ URI
+string rabbitUri = $"amqp://{rabbitUser}:{rabbitPass}@{rabbitHost}:{rabbitPort}/";
+
+// Add Health check
+builder.Services.AddHealthChecks()
+    .AddMySql(
+        connectionString: MySQLDatabase.DB_CONNECTION_STRING!,
+        name: "mysql",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: new[] { "db", "sql" })
+    // .AddRedis(
+    //     redisConn,
+    //     name: "redis",
+    //     failureStatus: HealthStatus.Unhealthy,
+    //     tags: new[] { "cache", "redis" })
+    .AddRabbitMQ(
+        rabbitConnectionString: rabbitUri,
+        name: "rabbitmq",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: new[] { "queue", "rabbitmq" });
+
+builder.Services.AddHealthChecksUI(options =>
+{
+    options.SetHeaderText("Microservice Health Check Dashboard");
+}).AddInMemoryStorage();
 
 // Add services to the container.
 builder.Services.AddRateLimiter(_ => _
@@ -140,6 +174,17 @@ app.UseRateLimiter();
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    AllowCachingResponses = false
+});
+
+app.MapHealthChecksUI(options =>
+{
+    options.UIPath = "/health-ui";
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
