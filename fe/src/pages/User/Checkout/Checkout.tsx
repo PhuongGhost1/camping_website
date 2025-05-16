@@ -1,5 +1,5 @@
 import React from "react";
-import { OrderItemProps, ProductFromApi } from "../../../App";
+import { OrderItemProps, ProductFromApi, UserProps } from "../../../App";
 import "./Checkout.css";
 import Footer from "../../../components/Footer/Footer";
 import Content from "./Content/Content";
@@ -11,6 +11,7 @@ interface CheckoutProps {
   totalPrice: number;
   onRemoveFromCart: (product: ProductFromApi) => void;
   onUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
+  user: UserProps | null;
 }
 
 const Checkout: React.FC<CheckoutProps> = ({
@@ -19,6 +20,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   totalPrice,
   onRemoveFromCart,
   onUpdateCartQuantity,
+  user,
 }) => {
   return (
     <>
@@ -34,7 +36,7 @@ const Checkout: React.FC<CheckoutProps> = ({
             onUpdateCartQuantity={onUpdateCartQuantity}
           />
 
-          <Summary totalPrice={totalPrice} />
+          <Summary totalPrice={totalPrice} user={user} />
         </div>
       </section>
 

@@ -293,4 +293,41 @@ export class ApiGateway {
       throw error;
     }
   }
+
+  public static async processPayment<T>(
+    orderId: string,
+    total: number
+  ): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.post<T>(
+        `/payments/process-payment`,
+        {
+          orderId,
+          total,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      throw error;
+    }
+  }
+
+  public static async confirmPayment<T>(
+    paymentId: string,
+    payerId: string,
+    token: string
+  ): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.get<T>(
+        `/payments/confirm-payment?paymentId=${paymentId}&payerId=${payerId}&token=${token}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error confirming payment:", error);
+      throw error;
+    }
+  }
 }

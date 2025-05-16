@@ -8,7 +8,14 @@ import { ToastContainer } from "react-toastify";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthenProvider>
-      <ToastContainer position="top-right" autoClose={5000} closeOnClick />
+      <ToastContainer
+        position="top-right"
+        autoClose={4000}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
       <App />
     </AuthenProvider>
   </StrictMode>

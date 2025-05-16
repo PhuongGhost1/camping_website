@@ -10,6 +10,7 @@ import Brand from "./Brand/Brand";
 import Tips from "./Tips/Tips";
 import ScrollReveal from "scrollreveal";
 import { OrderItemProps, ProductFromApi, UserProps } from "../../../App";
+import useToastQuery from "../../../hooks/useToastQuery";
 
 interface CommonProps {
   carts: OrderItemProps[];
@@ -38,6 +39,8 @@ function Home({
   cartIconRef,
   user,
 }: CommonProps): JSX.Element {
+  useToastQuery();
+
   useEffect(() => {
     const animate = ScrollReveal({
       origin: "top",

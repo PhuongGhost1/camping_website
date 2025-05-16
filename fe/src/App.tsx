@@ -314,6 +314,7 @@ function MainRoutes({
             totalPrice={totalPrice}
             onRemoveFromCart={onRemoveFromCart}
             onUpdateCartQuantity={handleUpdateCartQuantity}
+            user={user}
           />
         }
       />

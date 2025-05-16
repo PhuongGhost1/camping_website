@@ -1,22 +1,54 @@
 import React, { useState } from "react";
 import "./Summary.css";
-import { useNavigate } from "react-router-dom";
+import { ApiGateway } from "../../../../services/api/ApiService";
+import { OrderProps, UserProps } from "../../../../App";
+
+interface CheckOutProps {
+  approvalUrl: string;
+  paymentId: string;
+}
 
 interface SummaryProps {
   totalPrice: number;
+  user: UserProps | null;
 }
 
-const Summary: React.FC<SummaryProps> = ({ totalPrice }) => {
-  const navigate = useNavigate();
+const Summary: React.FC<SummaryProps> = ({ totalPrice, user }) => {
   const [isCheckout, setIsCheckout] = useState(false);
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+    if (!user) {
+      alert("Please login to proceed to checkout.");
+      return;
+    }
+
     setIsCheckout(true);
 
-    setTimeout(() => {
+    const orderUser = await ApiGateway.getOrderByUserId<OrderProps>();
+    if (!orderUser?.id) {
+      console.error("No order found for the user.");
+      return;
+    }
+
+    try {
+      const data = await ApiGateway.processPayment<CheckOutProps>(
+        orderUser.id,
+        Number(totalPrice.toFixed(2))
+      );
+
+      if (!data || !data.approvalUrl) {
+        console.error("Failed to process payment or missing approval URL.");
+        return;
+      }
+
+      setTimeout(() => {
+        setIsCheckout(false);
+        window.location.href = data.approvalUrl;
+      }, 2000);
+    } catch (error) {
+      console.error("Error during payment processing:", error);
       setIsCheckout(false);
-      navigate("/");
-    }, 2000);
+    }
   };
 
   return (
