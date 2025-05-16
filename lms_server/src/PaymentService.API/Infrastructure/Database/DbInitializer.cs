@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace OrderService.API.Infrastructure.Database;
+namespace PaymentService.API.Infrastructure.Database;
 public static class DbInitializer
 {
     public static IApplicationBuilder UseInitializeDatabase(this IApplicationBuilder application)

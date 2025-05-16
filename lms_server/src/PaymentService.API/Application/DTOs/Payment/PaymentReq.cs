@@ -16,6 +16,6 @@ public record ProcessPaymentReq
 public record ConfirmPaymentReq
 {
     public required string PaymentId { get; set; }
-    public required string Token { get; set; }
     public required string PayerId { get; set; }
+    public required string Token { get; set; }
 }

@@ -80,8 +80,8 @@ public class PaymentServices : IPaymentServices
     {
         try
         {
-            string return_url = "http://localhost:5184/payments/confirm-payment";
-            string cancel_url = "http://localhost:5173/";
+            string return_url = "http://localhost:5173/?payment=success";
+            string cancel_url = "http://localhost:5173/?payment=fail";
 
             var payment = CreatePayment(new ProcessCreatePaymentReq
             {
@@ -97,18 +97,23 @@ public class PaymentServices : IPaymentServices
 
             var convertTotal = Math.Round(req.Total, 2);
 
-            var paymentObj = new Payments
+            var paymentOrder = await _paymentRepository.GetPaymentByOrderId(req.OrderId);
+            if (paymentOrder == null)
             {
-                OrderId = req.OrderId,
-                PaymentMethod = PaymentMethodEnum.Paypal.ToString(),
-                Status = PaymentStatusEnum.Pending.ToString(),
-                TransactionId = payment.id,
-                Amount = convertTotal
-            };
+                var paymentObj = new Payments
+                {
+                    OrderId = req.OrderId,
+                    PaymentMethod = PaymentMethodEnum.Paypal.ToString(),
+                    Status = PaymentStatusEnum.Pending.ToString(),
+                    TransactionId = payment.id,
+                    Amount = convertTotal,
+                    PaidAt = DateTime.UtcNow,
+                };
 
-            var isProcess = await _paymentRepository.CreatePayment(paymentObj);
-            if (!isProcess)
-                return ErrorResp.BadRequest("Unable to process payment");
+                var isProcess = await _paymentRepository.CreatePayment(paymentObj);
+                if (!isProcess)
+                    return ErrorResp.BadRequest("Unable to process payment");
+            }
 
             return SuccessResp.Ok(new ProcessPaymentResp
             {
@@ -129,27 +134,26 @@ public class PaymentServices : IPaymentServices
             var apiContext = GetAPIContext();
 
             var paymentExecution = new PaymentExecution() { payer_id = req.PayerId };
-            var payment = new Payment() { id = req.PaymentId };
+            var payment = new Payment() { id = req.PaymentId, token = req.Token };
             var executedPayment = payment.Execute(apiContext, paymentExecution);
 
             if (executedPayment.state.ToLower() != "approved")
                 return ErrorResp.BadRequest("Payment not approved");
 
-            var paymentObj = new Payments
-            {
-                TransactionId = executedPayment.id,
-                Status = PaymentStatusEnum.Success.ToString()
-            };
+            var paymentOrder = await _paymentRepository.GetPaymentById(req.PaymentId);
+            if (paymentOrder == null)
+                return ErrorResp.BadRequest("Payment not found");
 
-            var isProcess = await _paymentRepository.UpdatePayment(paymentObj);
+            _eventPublisher.PublishPaymentProcessed(paymentOrder.OrderId, paymentOrder.Amount);
+
+            paymentOrder.TransactionId = executedPayment.id;
+            paymentOrder.Status = PaymentStatusEnum.Success.ToString();
+
+            var isProcess = await _paymentRepository.UpdatePayment(paymentOrder);
             if (!isProcess)
                 return ErrorResp.BadRequest("Unable to process payment");
 
-            var order = await _paymentRepository.GetPaymentById(req.PaymentId);
-
-            _eventPublisher.PublishPaymentProcessed(order?.OrderId, paymentObj.Amount);
-
-            return SuccessResp.Ok("http://localhost:5173/");
+            return SuccessResp.Ok("Payment success");
         }
         catch (System.Exception)
         {

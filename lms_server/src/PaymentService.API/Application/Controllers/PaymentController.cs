@@ -22,8 +22,8 @@ namespace PaymentService.API.Application.Controllers
         }
 
         [Authorize]
-        [HttpPost("confirm-payment")]
-        public async Task<IActionResult> ConfirmPayment([FromBody] ConfirmPaymentReq req)
+        [HttpGet("confirm-payment")]
+        public async Task<IActionResult> ConfirmPayment([FromQuery] ConfirmPaymentReq req)
         {
             return await _paymentServices.ConfirmPayment(req);
         }
