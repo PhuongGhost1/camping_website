@@ -42,11 +42,11 @@ const Summary: React.FC<SummaryProps> = ({ totalPrice, user }) => {
       }
 
       setTimeout(() => {
-        setIsCheckout(false);
         window.location.href = data.approvalUrl;
       }, 2000);
     } catch (error) {
       console.error("Error during payment processing:", error);
+    } finally {
       setIsCheckout(false);
     }
   };

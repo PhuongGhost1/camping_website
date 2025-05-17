@@ -69,6 +69,7 @@ function App() {
   const { user } = useAuthenContext();
   const { carts, setCarts, totalPrice, quantity, uniqueOrderId, fetchCarts } =
     useCart(user as UserProps);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleAddToCartSuccess = () => {
     toast.success("Product added to cart successfully!");
@@ -156,6 +157,8 @@ function App() {
   }, []);
 
   const fetchProducts = async () => {
+    setIsLoading(true);
+
     try {
       const data = await ApiGateway.getAllProducts<{
         products: ProductFromApi[];
@@ -177,6 +180,8 @@ function App() {
       console.error("Error fetching products:", error);
       setProducts([]);
       setProductBoxes([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -194,6 +199,7 @@ function App() {
         handleUpdateCartQuantity={handleUpdateCartQuantity}
         cartIconRef={cartIconRef as React.RefObject<HTMLDivElement>}
         user={user}
+        loading={isLoading}
       />
     </BrowserRouter>
   );
@@ -213,6 +219,7 @@ interface RouteProps {
   handleUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
   user: UserProps | null;
+  loading: boolean;
 }
 
 function MainRoutes({
@@ -227,6 +234,7 @@ function MainRoutes({
   handleUpdateCartQuantity,
   cartIconRef,
   user,
+  loading,
 }: RouteProps) {
   const location = useLocation();
   const background = location.state?.background;
@@ -248,6 +256,7 @@ function MainRoutes({
             onUpdateCartQuantity={handleUpdateCartQuantity}
             cartIconRef={cartIconRef}
             user={user}
+            loading={loading}
           />
         }
       />

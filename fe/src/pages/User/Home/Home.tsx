@@ -24,6 +24,7 @@ interface CommonProps {
   onUpdateCartQuantity: (product: ProductFromApi, quantity: number) => void;
   cartIconRef: React.RefObject<HTMLDivElement>;
   user: UserProps | null;
+  loading: boolean;
 }
 
 function Home({
@@ -38,6 +39,7 @@ function Home({
   onUpdateCartQuantity,
   cartIconRef,
   user,
+  loading,
 }: CommonProps): JSX.Element {
   useToastQuery();
 
@@ -67,6 +69,16 @@ function Home({
 
     return () => clearTimeout(revealTimeout);
   }, []);
+
+  // 👇 Show loading indicator while data is loading
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <span className="loading-text">Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <>
