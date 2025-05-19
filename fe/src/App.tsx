@@ -38,6 +38,8 @@ export interface UserProps {
   id: string;
   name: string;
   imageUrl: string;
+  email: string;
+  passwordHash: string;
 }
 
 export interface CategoryProductProps {
@@ -59,6 +61,11 @@ export interface ProductFromApi {
   reviews: [];
   createdAt: string;
   removing?: boolean;
+}
+
+export interface IActionResult {
+  status: number;
+  message: string;
 }
 
 function App() {

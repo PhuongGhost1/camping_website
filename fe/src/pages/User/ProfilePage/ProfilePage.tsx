@@ -5,6 +5,7 @@ import Header from "../../../components/Header/Header";
 import Footer from "../../../components/Footer/Footer";
 import UserSettings from "./UserSettings/UserSettings";
 import OrderHistory from "./OrderHistory/OrderHistory";
+import { useAuthenContext } from "../../../hooks/AuthenContext";
 
 interface ProfilePageProps {
   carts: OrderItemProps[];
@@ -27,8 +28,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   cartIconRef,
   onUpdateCartQuantity,
   products,
+  user,
 }) => {
   const [activeTab, setActiveTab] = useState("profile");
+  const { fetchUser } = useAuthenContext();
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -45,7 +48,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         cartIconRef={cartIconRef}
         onUpdateCartQuantity={onUpdateCartQuantity}
         sellingProducts={products}
-        user={null}
+        user={user}
       />
 
       {
@@ -71,7 +74,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
             </div>
 
             <div className="profile-content">
-              {activeTab === "profile" && <UserSettings />}
+              {activeTab === "profile" && (
+                <UserSettings user={user} loadUser={fetchUser} />
+              )}
               {activeTab === "orders" && <OrderHistory />}
             </div>
           </div>

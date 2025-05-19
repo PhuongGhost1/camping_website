@@ -11,7 +11,6 @@ interface RefreshTokenResponse {
   accessToken: string;
   refreshToken: string;
 }
-
 export class ApiGateway {
   public static readonly API_Base: string = import.meta.env
     .BASE_GATEWAY_API_URL;
@@ -327,6 +326,64 @@ export class ApiGateway {
       return response.data;
     } catch (error) {
       console.error("Error confirming payment:", error);
+      throw error;
+    }
+  }
+
+  public static async GetAllPayments<T>(orderId: string): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.get<T>(
+        `/payments/all-payments?orderId=${orderId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching all payments:", error);
+      throw error;
+    }
+  }
+
+  public static async UpdateUserInfo<T>(
+    firstName: string,
+    lastName: string
+  ): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.put<T>(`/users/update-info`, {
+        firstName,
+        lastName,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating user info:", error);
+      throw error;
+    }
+  }
+
+  public static async UpdateUserPassword<T>(
+    newPassword: string,
+    confirmPassword: string
+  ): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.put<T>(`/users/update-pwd`, {
+        newPassword,
+        confirmPassword,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating user password:", error);
+      throw error;
+    }
+  }
+
+  public static async GetAllOrders<T>(): Promise<T | null> {
+    this.setAuthHeader();
+    try {
+      const response = await this.axiosInstance.get<T>(`/orders/all-orders`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching all orders:", error);
       throw error;
     }
   }

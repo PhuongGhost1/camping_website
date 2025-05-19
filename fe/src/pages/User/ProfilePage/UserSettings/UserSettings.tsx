@@ -1,13 +1,19 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./UserSettings.css";
+import { IActionResult, UserProps } from "../../../../App";
+import { ApiGateway } from "../../../../services/api/ApiService";
+import { toast } from "react-toastify";
+import CustomToast from "../../../../helper/toasts/CustomToast";
+interface UserSettingsProps {
+  user: UserProps | null;
+  loadUser: () => Promise<void>;
+}
 
-const UserSettings = () => {
+const UserSettings: React.FC<UserSettingsProps> = ({ user, loadUser }) => {
   const [isOpenEditAccount, setIsOpenEditAccount] = useState(false);
-  const [firstName, setFirstName] = useState("Hoang");
-  const [lastName, setLastName] = useState("Trong Phuong");
-  const [email, setEmail] = useState("trngphng94@gmail.com");
-  const [phone, setPhone] = useState("");
-  const [currentPwd, setCurrentPwd] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("0123456789");
   const [newPwd, setNewPwd] = useState("");
   const [reEnterPwd, setReEnterPwd] = useState("");
   const [isOpenChangePassword, setIsOpenChangePassword] = useState(false);
@@ -31,20 +37,147 @@ const UserSettings = () => {
   };
 
   useEffect(() => {
+    if (user?.name) {
+      const nameParts = user.name.trim().split(" ");
+      setFirstName(nameParts[0]);
+      setLastName(nameParts.slice(1).join(" "));
+    }
+  }, [user]);
+
+  useEffect(() => {
     const allFieldsFilled =
-      firstName.trim() !== "" &&
-      lastName.trim() !== "" &&
-      email.trim() !== "" &&
-      phone.trim() !== "";
+      firstName.trim() !== "" && lastName.trim() !== "" && phone.trim() !== "";
 
     const passwordFieldsFilled =
-      currentPwd.trim() !== "" &&
-      newPwd.trim() !== "" &&
-      reEnterPwd.trim() !== "";
+      newPwd.trim() !== "" && reEnterPwd.trim() !== "";
 
     setIsAllFieldsFilled(allFieldsFilled);
     setIsPasswordFieldsFilled(passwordFieldsFilled);
-  }, [firstName, lastName, email, phone, currentPwd, newPwd, reEnterPwd]);
+  }, [firstName, lastName, phone, newPwd, reEnterPwd]);
+
+  const handleUpdateAccount = async () => {
+    try {
+      const data = await ApiGateway.UpdateUserInfo<IActionResult>(
+        firstName,
+        lastName
+      );
+
+      if (data?.status === 200) {
+        toast.success(
+          <CustomToast emoji="✅" message="Account updated successfully!" />,
+          {
+            position: "top-right",
+            autoClose: 4000,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+          }
+        );
+        setIsOpenEditAccount(false);
+        await loadUser();
+      } else if (data?.status === 404) {
+        toast.error(<CustomToast emoji="❌" message="Account not found!" />, {
+          position: "top-right",
+          autoClose: 4000,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        });
+      } else {
+        toast.error(
+          <CustomToast emoji="❌" message="Error while updating account!" />,
+          {
+            position: "top-right",
+            autoClose: 4000,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+          }
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        <CustomToast emoji="❌" message="Error while updating account!" />,
+        {
+          position: "top-right",
+          autoClose: 4000,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        }
+      );
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    if (newPwd !== reEnterPwd) {
+      toast.error(
+        <CustomToast emoji="❌" message="Passwords do not match!" />,
+        {
+          position: "top-right",
+          autoClose: 4000,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        }
+      );
+      return;
+    }
+
+    try {
+      const data = await ApiGateway.UpdateUserPassword<IActionResult>(
+        newPwd,
+        reEnterPwd
+      );
+
+      if (data?.status === 200) {
+        toast.success(
+          <CustomToast emoji="✅" message="Password updated successfully!" />,
+          {
+            position: "top-right",
+            autoClose: 4000,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+          }
+        );
+        setIsOpenChangePassword(false);
+        await loadUser();
+      } else if (data?.status === 404) {
+        toast.error(<CustomToast emoji="❌" message="Account not found!" />, {
+          position: "top-right",
+          autoClose: 4000,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        });
+      } else {
+        toast.error(
+          <CustomToast emoji="❌" message="Error while updating password!" />,
+          {
+            position: "top-right",
+            autoClose: 4000,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+          }
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        <CustomToast emoji="❌" message="Error while updating password!" />,
+        {
+          position: "top-right",
+          autoClose: 4000,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        }
+      );
+    }
+  };
 
   return (
     <div className="user-settings">
@@ -88,11 +221,12 @@ const UserSettings = () => {
                 <sup>*</sup>
               </label>
               <input
+                disabled={true}
                 type="email"
                 id="email"
                 name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={user?.email}
+                style={{ cursor: "not-allowed" }}
               />
             </div>
           </div>
@@ -108,6 +242,10 @@ const UserSettings = () => {
                 name="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                placeholder="123-456-7890"
+                style={{ cursor: "not-allowed" }}
+                disabled={true}
               />
             </div>
           </div>
@@ -115,6 +253,7 @@ const UserSettings = () => {
             <button
               disabled={!isAllFieldsFilled}
               className={`${isAllFieldsFilled ? "" : "disabled"}`}
+              onClick={handleUpdateAccount}
             >
               Save
             </button>
@@ -127,13 +266,13 @@ const UserSettings = () => {
             <label htmlFor="username">
               <strong>Name</strong>
             </label>
-            <p>Phuong Hoang</p>
+            <p>{user?.name}</p>
           </div>
           <div className="settings-option">
             <label htmlFor="email">
               <strong>Email</strong>
             </label>
-            <p>trngphng94@gmail.com</p>
+            <p>{user?.email}</p>
           </div>
           <div className="button-settings" onClick={openEditAccount}>
             <i className="ri-pencil-line"></i>
@@ -150,26 +289,13 @@ const UserSettings = () => {
                   id="password"
                   name="password"
                   value={123456789}
+                  readOnly={true}
                   className={`input-pwd ${isOpenChangePassword ? "" : "open"}`}
+                  style={{ cursor: "not-allowed" }}
                 />
                 <div
                   className={`change-pwd ${isOpenChangePassword ? "open" : ""}`}
                 >
-                  <div className="edit-settings-option">
-                    <div className="edit-setting">
-                      <label htmlFor="current-password">
-                        Current password
-                        <sup>*</sup>
-                      </label>
-                      <input
-                        type="password"
-                        id="current-password"
-                        name="current-password"
-                        value={currentPwd}
-                        onChange={(e) => setCurrentPwd(e.target.value)}
-                      />
-                    </div>
-                  </div>
                   <div className="edit-settings-option">
                     <div className="edit-setting">
                       <label htmlFor="new-password">
@@ -204,6 +330,7 @@ const UserSettings = () => {
                     <button
                       disabled={!isPasswordFieldsFilled}
                       className={`${isPasswordFieldsFilled ? "" : "disabled"}`}
+                      onClick={handleUpdatePassword}
                     >
                       Save
                     </button>

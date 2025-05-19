@@ -13,6 +13,7 @@ interface AuthenContextProps {
   logout: () => Promise<void>;
   user: UserProps | null;
   setUser: React.Dispatch<React.SetStateAction<UserProps | null>>;
+  fetchUser: () => Promise<void>;
 }
 
 export const AuthenContext = createContext<AuthenContextProps | undefined>(
@@ -55,7 +56,7 @@ const AuthenProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthenContext.Provider value={{ login, logout, user, setUser }}>
+    <AuthenContext.Provider value={{ login, logout, user, setUser, fetchUser }}>
       {children}
     </AuthenContext.Provider>
   );

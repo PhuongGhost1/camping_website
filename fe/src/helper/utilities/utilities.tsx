@@ -1,3 +1,5 @@
+import SHA256 from "crypto-js/sha256";
+
 export function animateAddToCart(
   imgRef: HTMLImageElement,
   cartIconRef: HTMLDivElement
@@ -37,4 +39,10 @@ export function animateAddToCart(
 
 export function sanitize(str: string) {
   return str.replace(/\s+/g, "");
+}
+
+export function hashObject<T>(obj: T): string {
+  const json = JSON.stringify(obj);
+  const hash = SHA256(json).toString();
+  return hash;
 }
