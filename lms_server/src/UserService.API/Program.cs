@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using UserService.API.Application.Services;
 using UserService.API.Application.Shared.Constant;
+using UserService.API.Core.Jwt;
 using UserService.API.Infrastructure.Database;
 using UserService.API.Infrastructure.Repository;
 
@@ -151,6 +152,7 @@ builder.Services.AddDbContext<CampingDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 var app = builder.Build();
 

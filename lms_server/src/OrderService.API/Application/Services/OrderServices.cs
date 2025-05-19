@@ -12,6 +12,7 @@ public interface IOrderServices
     Task<IActionResult> CreateOrder(CreateOrderReq order);
     Task<IActionResult> GetOrderByUserId(Guid? userId);
     Task<IActionResult> UpdateOrderTotalAmount(Guid? userId, decimal totalAmount);
+    Task<IActionResult> GetAllOrdersByUserId(Guid? userId);
 }
 public class OrderServices : IOrderServices
 {
@@ -36,6 +37,25 @@ public class OrderServices : IOrderServices
             if (!isCreated) return ErrorResp.BadRequest("Failed to create order!");
 
             return SuccessResp.Created("Order created successfully!");
+        }
+        catch (System.Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> GetAllOrdersByUserId(Guid? userId)
+    {
+        try
+        {
+            if(userId == null || userId == Guid.Empty)
+                return ErrorResp.Unauthorized("User ID is required!");
+
+            var orders = await _orderRepo.GetAllOrdersByUserId(userId);
+            if (orders == null)
+                return ErrorResp.NotFound("No orders found for this user!");
+
+            return SuccessResp.Ok(orders);
         }
         catch (System.Exception)
         {

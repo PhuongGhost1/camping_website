@@ -27,5 +27,12 @@ namespace PaymentService.API.Application.Controllers
         {
             return await _paymentServices.ConfirmPayment(req);
         }
+
+        [Authorize]
+        [HttpGet("all-payments")]
+        public async Task<IActionResult> GetAllPaymentByOrderId([FromQuery] Guid orderId)
+        {
+            return await _paymentServices.GetAllPaymentByOrderId(orderId);
+        }
     }
 }

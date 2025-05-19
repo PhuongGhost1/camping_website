@@ -44,4 +44,12 @@ public class OrderRepository : IOrderRepository
         _dbContext.Orders.Update(order);
         return await _dbContext.SaveChangesAsync() > 0;
     }
+
+    public async Task<IEnumerable<Orders>> GetAllOrdersByUserId(Guid? userId)
+    {
+        return await _dbContext.Orders
+                    .AsNoTracking()
+                    .Where(x => x.UserId == userId)
+                    .ToListAsync();
+    }
 }

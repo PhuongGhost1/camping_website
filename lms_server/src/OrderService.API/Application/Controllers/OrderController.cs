@@ -70,5 +70,14 @@ namespace OrderService.API.Application.Controllers
             var userId = Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
             return await _orderService.UpdateOrderTotalAmount(userId, Math.Round(req.TotalAmount, 2));
         }
+
+        [Authorize]
+        [HttpGet("all-orders")]
+        public async Task<IActionResult> GetAllOrdersByUserId()
+        {
+            _logger.LogInformation("Get all orders by user id");
+            var userId = Guid.Parse(User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
+            return await _orderService.GetAllOrdersByUserId(userId);
+        }
     }
 }

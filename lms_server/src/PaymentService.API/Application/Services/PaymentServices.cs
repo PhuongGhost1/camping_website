@@ -14,6 +14,7 @@ public interface IPaymentServices
 {
     Task<IActionResult> ProcessPaymentWithPaypal(ProcessPaymentReq req);
     Task<IActionResult> ConfirmPayment(ConfirmPaymentReq req);
+    Task<IActionResult> GetAllPaymentByOrderId(Guid orderId);
 }
 public class PaymentServices : IPaymentServices
 {
@@ -154,6 +155,22 @@ public class PaymentServices : IPaymentServices
                 return ErrorResp.BadRequest("Unable to process payment");
 
             return SuccessResp.Ok("Payment success");
+        }
+        catch (System.Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> GetAllPaymentByOrderId(Guid orderId)
+    {
+        try
+        {
+            var paymentOrder = await _paymentRepository.GetPaymentsByOrderId(orderId);
+            if (paymentOrder == null)
+                return ErrorResp.BadRequest("Payment not found");
+
+            return SuccessResp.Ok(paymentOrder);
         }
         catch (System.Exception)
         {

@@ -39,4 +39,13 @@ public class PaymentRepository : IPaymentRepository
             .FirstOrDefaultAsync(p => p.OrderId == orderId &&
                                 p.Status == PaymentStatusEnum.Pending.ToString());
     }
+
+    public async Task<IEnumerable<Payments>> GetPaymentsByOrderId(Guid orderId)
+    {
+        return await _dbContext.Payments
+            .Where(p => p.OrderId == orderId)
+            .AsNoTracking()
+            .OrderByDescending(p => p.PaidAt)
+            .ToListAsync();
+    }
 }

@@ -17,4 +17,10 @@ public class UserRepository : IUserRepository
             .Include(u => u.Reviews)
             .FirstOrDefaultAsync(u => u.Id == userId);
     }
+
+    public async Task<bool> UpdateUserInfo(Users user)
+    {
+        _dbContext.Users.Update(user);
+        return await _dbContext.SaveChangesAsync() > 0;
+    }
 }

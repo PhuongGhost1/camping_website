@@ -8,4 +8,5 @@ public interface IPaymentRepository
     Task<bool> UpdatePayment(Payments payment);
     Task<Payments?> GetPaymentById(string paymentId);
     Task<Payments?> GetPaymentByOrderId(Guid orderId);
+    Task<IEnumerable<Payments>> GetPaymentsByOrderId(Guid orderId);
 }
