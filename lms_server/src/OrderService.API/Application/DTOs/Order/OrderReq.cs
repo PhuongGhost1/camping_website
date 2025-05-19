@@ -11,5 +11,5 @@ public record UpdateTotalOrderReq(
 
 public record PublishOrderReq(
     Guid OrderId,
-    decimal TotalAmount
+    decimal Total
 );

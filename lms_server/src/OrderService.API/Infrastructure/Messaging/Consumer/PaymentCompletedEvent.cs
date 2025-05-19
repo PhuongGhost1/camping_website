@@ -54,7 +54,7 @@ public class PaymentCompletedEvent : BackgroundService
 
             var orderReq = new PublishOrderReq(
                 OrderId: data.OrderId,
-                TotalAmount: data.TotalAmount
+                Total: data.TotalAmount
             );
 
             var order = await orderService.GetOrderById(orderReq.OrderId);
@@ -72,7 +72,7 @@ public class PaymentCompletedEvent : BackgroundService
             }
 
             order.Status = OrderStatusEnum.Completed.ToString();
-            order.TotalAmount = orderReq.TotalAmount;
+            order.TotalAmount = orderReq.Total;
 
             foreach (var orderItem in orderItems)
             {
