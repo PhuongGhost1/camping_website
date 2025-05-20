@@ -17,6 +17,41 @@ const OtpInput: React.FC<OtpInputProps> = ({
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
 
+  const verifyOtp = async (otpArray: string[]) => {
+    const isAllFilled = otpArray.every((digit) => digit !== "");
+    const isLastIndex = true;
+
+    if (!emailInput) {
+      console.error("Email input is missing.");
+      return;
+    }
+
+    if (isAllFilled && isLastIndex) {
+      setIsFilled(true);
+
+      try {
+        const isSuccess = await ApiGateway.VerifyOTP(
+          otpArray.join(""),
+          emailInput
+        );
+
+        if (isSuccess) {
+          ChangeStateType("Login");
+          if (onRegisterSuccess) {
+            onRegisterSuccess();
+          }
+        } else {
+          console.error("Invalid OTP");
+        }
+      } catch (error) {
+        console.error("Error verifying OTP:", error);
+      } finally {
+        setOtp(new Array(6).fill(""));
+        setIsFilled(false);
+      }
+    }
+  };
+
   const handleChange = async (value: string, index: number) => {
     if (!/^[0-9]?$/.test(value)) return;
 
@@ -33,34 +68,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
       const isLastIndex = index === 5;
 
       if (isAllFilled && isLastIndex) {
-        if (!emailInput) {
-          console.error("Email input is missing.");
-          return;
-        }
-
-        setIsFilled(true);
-
-        try {
-          const isSuccess = await ApiGateway.VerifyOTP(
-            newOtp.join(""),
-            emailInput
-          );
-
-          if (isSuccess) {
-            ChangeStateType("Login");
-
-            if (onRegisterSuccess) {
-              onRegisterSuccess();
-            }
-          } else {
-            console.error("Invalid OTP");
-          }
-        } catch (error) {
-          console.error("Error verifying OTP:", error);
-        } finally {
-          setOtp(new Array(6).fill(""));
-          setIsFilled(false);
-        }
+        await verifyOtp(newOtp);
       }
     }
   };
@@ -77,7 +85,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = async (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text/plain").split("");
     if (pastedData.length === 6) {
@@ -86,9 +94,9 @@ const OtpInput: React.FC<OtpInputProps> = ({
         newOtp[i] = pastedData[i] || "";
       }
       setOtp(newOtp);
-      newOtp.forEach((_, index) => {
-        inputsRef.current[index]?.focus();
-      });
+      inputsRef.current[5]?.focus();
+
+      await verifyOtp(newOtp);
     }
   };
 
