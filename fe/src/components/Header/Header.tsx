@@ -46,6 +46,11 @@ const header: LinkProps[] = [
   },
 ];
 
+const placeholders = ["Name", "Country", "Email", "Product"];
+const TYPING_SPEED = 100;
+const PAUSE_DURATION = 1500;
+const ERASE_SPEED = 50;
+
 const Header = ({
   carts,
   quanity,
@@ -68,6 +73,9 @@ const Header = ({
   const isMobile = window.innerWidth <= 768;
   const [isOpenUserInfo, setIsOpenUserInfo] = useState(false);
   const navigate = useNavigate();
+  const [displayText, setDisplayText] = useState("");
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const [typing, setTyping] = useState(true);
 
   const openLogin = () => {
     setIsLoginOpen(true);
@@ -135,6 +143,35 @@ const Header = ({
     setIsOpenUserInfo(!isOpenUserInfo);
   };
 
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const fullText = placeholders[placeholderIndex];
+
+    if (typing) {
+      if (displayText.length < fullText.length) {
+        timeout = setTimeout(() => {
+          setDisplayText(fullText.slice(0, displayText.length + 1));
+        }, TYPING_SPEED);
+      } else {
+        timeout = setTimeout(() => {
+          setTyping(false);
+        }, PAUSE_DURATION);
+      }
+    } else {
+      if (displayText.length > 0) {
+        timeout = setTimeout(() => {
+          setDisplayText(fullText.slice(0, displayText.length - 1));
+        }, ERASE_SPEED);
+      } else {
+        setTyping(true);
+        setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [displayText, typing, placeholderIndex]);
+
   return (
     <header>
       {isLoginOpen && <Authentication closeLogin={closeLogin} type={type} />}
@@ -155,7 +192,7 @@ const Header = ({
             <div className={`search-bar ${isOpenSearch ? "open-search" : ""}`}>
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder={`Search For ${displayText}`}
                 value={searchValue}
                 onChange={(event) => handleInputChange(event)}
               />
