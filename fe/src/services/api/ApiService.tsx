@@ -387,4 +387,38 @@ export class ApiGateway {
       throw error;
     }
   }
+
+  public static async VerifyEmail<T>(
+    name: string,
+    email: string,
+    pwd: string
+  ): Promise<T | null> {
+    try {
+      const response = await this.axiosInstance.post<T>(`/auth/verify-email`, {
+        name,
+        email,
+        pwd,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error verifying email:", error);
+      throw error;
+    }
+  }
+
+  public static async VerifyOTP<T>(
+    otp: string,
+    email: string
+  ): Promise<T | null> {
+    try {
+      const response = await this.axiosInstance.post<T>(`/auth/verify-otp`, {
+        otp,
+        email,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      throw error;
+    }
+  }
 }

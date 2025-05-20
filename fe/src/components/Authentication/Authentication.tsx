@@ -4,6 +4,8 @@ import LoginSide from "../../assets/login-side.png";
 import { useAuthenContext } from "../../hooks/AuthenContext";
 import { ApiGateway } from "../../services/api/ApiService";
 import { toast } from "react-toastify";
+import OtpInput from "./OTP/OtpInput";
+import CustomToast from "../../helper/toasts/CustomToast";
 
 interface AuthenticationProps {
   closeLogin: () => void;
@@ -44,14 +46,13 @@ const Authentication: React.FC<AuthenticationProps> = ({
   };
 
   const onClickRegister = async () => {
-    const isSuccess = await ApiGateway.Register(
+    const isSuccess = await ApiGateway.VerifyEmail(
+      usernameInput,
       emailInput,
-      passwordInput,
-      usernameInput
+      passwordInput
     );
     if (isSuccess) {
-      setTypeInput("Login");
-      handleRegisterSuccess();
+      setTypeInput("OTP");
     } else {
       handleRegisterFail();
     }
@@ -66,7 +67,7 @@ const Authentication: React.FC<AuthenticationProps> = ({
   };
 
   const handleRegisterFail = () => {
-    toast.error("Email already exists");
+    toast.error(<CustomToast emoji="❌" message="Email already exists" />);
   };
 
   const ChangeStateType = (value: string) => {
@@ -197,7 +198,6 @@ const Authentication: React.FC<AuthenticationProps> = ({
                 />
                 <button className="sign-in">Send Reset</button>
                 <p className="sign-up">
-                  Remember Password?{" "}
                   <span
                     className="bold"
                     onClick={() => ChangeStateType("Login")}
@@ -206,6 +206,13 @@ const Authentication: React.FC<AuthenticationProps> = ({
                   </span>
                 </p>
               </>
+            )}
+            {typeInput === "OTP" && (
+              <OtpInput
+                ChangeStateType={ChangeStateType}
+                onRegisterSuccess={handleRegisterSuccess}
+                emailInput={emailInput}
+              />
             )}
           </div>
         </div>
