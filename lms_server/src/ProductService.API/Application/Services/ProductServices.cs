@@ -9,12 +9,14 @@ using ProductService.API.Infrastructure.Repository.Category;
 using ProductService.API.Infrastructure.Repository.Product;
 
 namespace ProductService.API.Application.Services;
+
 public interface IProductService
 {
     public Task<IActionResult> HandleGetProducts(GetProductReq req, Guid? userId);
     public Task<IActionResult> HandleCreateProduct(CreateProductReq createProductReq);
     public Task<IActionResult> HandleUpdateProduct(UpdateProductReq updateProductReq);
     public Task<IActionResult> HandleGetProductById(Guid id);
+    public Task<IActionResult> HandleUploadProduct(CreateProductReq createProductReq);
 }
 
 public class ProductServices : IProductService
@@ -23,7 +25,8 @@ public class ProductServices : IProductService
     private readonly ICacheService _cacheService;
     private readonly IMediaServices _mediaServices;
     private readonly ICategoryRepository _categoryRepo;
-    public ProductServices(IProductRepository productRepo, ICategoryRepository categoryRepo, ICacheService cacheService, IMediaServices mediaServices)
+    public ProductServices(IProductRepository productRepo, ICategoryRepository categoryRepo,
+    ICacheService cacheService, IMediaServices mediaServices)
     {
         _productRepo = productRepo;
         _categoryRepo = categoryRepo;
@@ -63,6 +66,49 @@ public class ProductServices : IProductService
             }
 
             return SuccessResp.Created(new CreateProductResp (
+                Product: newProduct,
+                Result: "Product created successfully"
+            ));
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> HandleUploadProduct(CreateProductReq createProductReq)
+    {
+        try
+        {
+            if (createProductReq is null)
+            return ErrorResp.InternalServerError("Request is required");
+
+            var category = await _categoryRepo.GetCategoriesById(createProductReq.CategoryId);
+            if (category is null)
+                return ErrorResp.InternalServerError("Category not found");
+
+            if (createProductReq.ImageUrl == null || createProductReq.ImageUrl.Length == 0)
+                return ErrorResp.BadRequest("Image file is required");
+
+            var imageUrl = await _mediaServices.HandleCreateMedia(createProductReq.ImageUrl, MediaTypeEnum.Image);
+            if (imageUrl == null || imageUrl.StartsWith("File"))
+                return ErrorResp.BadRequest(imageUrl);
+                
+            var newProduct = new Products
+            {
+                Name = createProductReq.Name,
+                Description = createProductReq.Description,
+                Price = createProductReq.Price,
+                Stock = createProductReq.Stock,
+                ImageUrl = imageUrl!,
+                CategoryId = createProductReq.CategoryId
+            };
+
+            var result = await _productRepo.CreateProduct(newProduct);
+            if (!result)
+                return ErrorResp.InternalServerError("Failed to create product");
+
+            return SuccessResp.Created(new CreateProductResp(
                 Product: newProduct,
                 Result: "Product created successfully"
             ));

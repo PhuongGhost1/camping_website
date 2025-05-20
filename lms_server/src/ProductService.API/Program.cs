@@ -165,6 +165,7 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<IMediaServices, MediaServices>();
 builder.Services.AddScoped<IGCSService, LocalStorageService>();
+builder.Services.AddScoped<IGCSService, GCSService>();
 
 var app = builder.Build();
 

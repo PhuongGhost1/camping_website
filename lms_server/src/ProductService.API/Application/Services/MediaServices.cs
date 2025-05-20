@@ -20,6 +20,8 @@ public class MediaServices : IMediaServices
 
     public async Task<string?> HandleCreateMedia(IFormFile file, MediaTypeEnum type)
     {
+        Console.WriteLine("[MediaServices] Start upload");
+        
         if (file == null || file.Length == 0)
         {
             return "File is empty";

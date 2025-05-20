@@ -15,7 +15,7 @@ namespace ProductService.API.Application.Controllers
         public ProductController(ILogger<ProductController> logger, IProductService productService)
         {
             _logger = logger;
-            _productService = productService;   
+            _productService = productService;
         }
 
         [HttpGet("all-products")]
@@ -50,6 +50,13 @@ namespace ProductService.API.Application.Controllers
         {
             _logger.LogInformation("Get Product by Id");
             return await _productService.HandleGetProductById(id);
+        }
+
+        [HttpPost("upload-product")]
+        public async Task<IActionResult> UploadProduct([FromForm] CreateProductReq createProductReq)
+        {
+            _logger.LogInformation("Upload Product");
+            return await _productService.HandleUploadProduct(createProductReq);
         }
     }
 }
