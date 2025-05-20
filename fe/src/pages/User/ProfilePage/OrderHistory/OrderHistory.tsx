@@ -1,19 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { OrderProps } from "../../../../App";
 import "./OrderHistory.css";
 import { ApiGateway } from "../../../../services/api/ApiService";
-
-interface PaymentOrderProps {
-  id: string;
-  paymentMethod: string;
-  status: string;
-  amount: number;
-  paidAt: string;
+import { PaymentOrderProps } from "../ProfilePage";
+interface OrderHistoryProps {
+  handleChoosePaymentDetails: (orderId: string) => void;
+  getPaymentOrders: PaymentOrderProps[];
+  selectedOrderId: string | null;
+  setGetPaymentOrders: React.Dispatch<
+    React.SetStateAction<PaymentOrderProps[]>
+  >;
 }
 
-const OrderHistory = () => {
-  const [paymentOrders, setPaymentOrders] = useState<PaymentOrderProps[]>([]);
-
+const OrderHistory: React.FC<OrderHistoryProps> = ({
+  handleChoosePaymentDetails,
+  getPaymentOrders,
+  selectedOrderId,
+  setGetPaymentOrders,
+}) => {
   useEffect(() => {
     const fetchPaymentOrders = async () => {
       const order = await ApiGateway.GetAllOrders<OrderProps[]>();
@@ -35,13 +39,13 @@ const OrderHistory = () => {
             order !== null && order !== undefined
         );
 
-      setPaymentOrders(filteredOrders);
+      setGetPaymentOrders(filteredOrders);
     };
 
     fetchPaymentOrders()
       .then(() => console.log("Payment orders fetched successfully"))
       .catch((error) => console.error("Error fetching payment orders:", error));
-  }, []);
+  }, [setGetPaymentOrders]);
 
   return (
     <div className="order-history">
@@ -54,21 +58,35 @@ const OrderHistory = () => {
             <th>Date</th>
             <th>Total Amount</th>
             <th>Status</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {paymentOrders.length === 0 ? (
+          {getPaymentOrders.length === 0 ? (
             <tr>
               <td colSpan={4}>No orders found</td>
             </tr>
           ) : (
-            paymentOrders.map((order) => (
-              <tr key={order.id}>
-                <td>{paymentOrders.indexOf(order) + 1}</td>
+            getPaymentOrders.map((order) => (
+              <tr
+                key={order.id}
+                className={`order-history-row ${
+                  selectedOrderId === order.orderId ? "clicked" : ""
+                }`}
+              >
+                <td>{getPaymentOrders.indexOf(order) + 1}</td>
                 <td>{order.paymentMethod}</td>
                 <td>{new Date(order.paidAt).toLocaleDateString()}</td>
                 <td>${order.amount.toFixed(2)}</td>
                 <td>{order.status}</td>
+                <td>
+                  <button
+                    className="order-history-button"
+                    onClick={() => handleChoosePaymentDetails(order.orderId)}
+                  >
+                    View
+                  </button>
+                </td>
               </tr>
             ))
           )}
