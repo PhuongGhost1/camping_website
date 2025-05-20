@@ -10,3 +10,6 @@ public record RegisterResponse(Users user, string result);
 
 public record RefreshTokenRequest(string refreshToken);
 public record RefreshTokenResponse(string accessToken, string refreshToken);
+
+public record RegisterVerifyRequest(string name, string email, string pwd);
+public record RegisterVerifyResponse(string name, string email, string pwd, string otp);

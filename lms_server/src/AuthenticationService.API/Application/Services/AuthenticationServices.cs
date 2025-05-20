@@ -1,8 +1,12 @@
 ﻿using AuthenticationService.API.Application.DTOs.Authentication;
+using AuthenticationService.API.Application.DTOs.Mail;
+using AuthenticationService.API.Application.DTOs.OTP;
 using AuthenticationService.API.Application.Shared.Constant;
 using AuthenticationService.API.Application.Shared.Constant.Type;
 using AuthenticationService.API.Core.Jwt;
+using AuthenticationService.API.Core.Mail;
 using AuthenticationService.API.Domain;
+using AuthenticationService.API.Infrastructure.Cache;
 using AuthenticationService.API.Infrastructure.Messaging.Publisher;
 using AuthenticationService.API.Infrastructure.Repository.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -15,17 +19,24 @@ public interface IAuthenticationService
     Task<IActionResult> Register(RegisterRequest req);
     Task<IActionResult> RefreshToken(RefreshTokenRequest req);
     Task<IActionResult> LogOut(Guid userId);
+    Task<IActionResult> VerifyEmail(RegisterVerifyRequest req);
+    Task<IActionResult> VerifyOtp(VerifyOtpRequest req);
 }
 public class AuthenticationServices : IAuthenticationService
 {
     private readonly IAuthenticationRepository _authRepo;
     private readonly IJwtService _jwtService;
     private readonly IEventPublisher _eventPublisher;
-    public AuthenticationServices(IAuthenticationRepository authRepo, IJwtService jwtService, IEventPublisher eventPublisher)
+    private readonly IMailService _mailService;
+    private readonly ICacheService _cacheService;
+    public AuthenticationServices(IAuthenticationRepository authRepo, IJwtService jwtService,
+    IEventPublisher eventPublisher, IMailService mailService, ICacheService cacheService)
     {
         _authRepo = authRepo;
         _jwtService = jwtService;
         _eventPublisher = eventPublisher;
+        _mailService = mailService;
+        _cacheService = cacheService;
     }
     public async Task<IActionResult> Login(LoginRequest req)
     {
@@ -119,10 +130,6 @@ public class AuthenticationServices : IAuthenticationService
     {
         try
         {
-            var isExist = await _authRepo.IsEmailExists(req.email);
-
-            if (isExist) return ErrorResp.BadRequest("Email already exist!");
-
             var newUser = new Users
             {
                 Name = req.name,
@@ -138,6 +145,64 @@ public class AuthenticationServices : IAuthenticationService
             : ErrorResp.BadRequest("Faild to create user!");
         }
         catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> VerifyEmail(RegisterVerifyRequest req)
+    {
+        try
+        {
+            var isExist = await _authRepo.IsEmailExists(req.email);
+            if (isExist) return ErrorResp.BadRequest("Email already exists!");
+
+            var otp = new Random().Next(100000, 999999).ToString();
+
+            await _cacheService.Set(
+                $"otp:{req.email}",
+                new RegisterVerifyResponse(req.name, req.email, req.pwd, otp),
+                TimeSpan.FromMinutes(5));
+
+            var mailRequest = new MailRequest
+            {
+                ToEmail = req.email,
+                Subject = "Your OTP Code",
+                Body = $"<h2>Your verification OTP code is: {otp}</h2>"
+            };
+
+            await _mailService.SendEmailAsync(mailRequest);
+
+            return SuccessResp.Ok("OTP sent to email!");
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> VerifyOtp(VerifyOtpRequest req)
+    {
+        try
+        {
+            var cachedOtp = await _cacheService.Get<RegisterVerifyResponse>($"otp:{req.Email}");
+
+            if (cachedOtp == null)
+                return ErrorResp.BadRequest("OTP expired or not found");
+
+            if (cachedOtp.otp != req.Otp)
+                return ErrorResp.BadRequest("Invalid OTP");
+
+            await _cacheService.Remove($"otp:{req.Email}");
+
+            return await Register(new RegisterRequest
+            (
+                cachedOtp.name,
+                cachedOtp.email,
+                cachedOtp.pwd
+            ));
+        }
+        catch (System.Exception)
         {
             throw;
         }
