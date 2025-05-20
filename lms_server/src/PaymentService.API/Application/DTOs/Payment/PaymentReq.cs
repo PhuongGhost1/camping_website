@@ -19,3 +19,9 @@ public record ConfirmPaymentReq
     public required string PayerId { get; set; }
     public required string Token { get; set; }
 }
+
+public class StatisticMonth
+{
+    public required int Month { get; set; }
+    public decimal? Amount { get; set; }
+}

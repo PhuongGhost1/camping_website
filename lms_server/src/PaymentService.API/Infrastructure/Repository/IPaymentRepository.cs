@@ -9,4 +9,5 @@ public interface IPaymentRepository
     Task<Payments?> GetPaymentById(string paymentId);
     Task<Payments?> GetPaymentByOrderId(Guid orderId);
     Task<IEnumerable<Payments>> GetPaymentsByOrderId(Guid orderId);
+    Task<IEnumerable<Payments>> GetPaymentsForStastic(int year);
 }

@@ -15,6 +15,7 @@ public interface IPaymentServices
     Task<IActionResult> ProcessPaymentWithPaypal(ProcessPaymentReq req);
     Task<IActionResult> ConfirmPayment(ConfirmPaymentReq req);
     Task<IActionResult> GetAllPaymentByOrderId(Guid orderId);
+    Task<IActionResult> StasticPaymentInYear(int year);
 }
 public class PaymentServices : IPaymentServices
 {
@@ -171,6 +172,47 @@ public class PaymentServices : IPaymentServices
                 return ErrorResp.BadRequest("Payment not found");
 
             return SuccessResp.Ok(paymentOrder);
+        }
+        catch (System.Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> StasticPaymentInYear(int year)
+    {
+        try
+        {
+            var transactions = await _paymentRepository.GetPaymentsForStastic(year);
+
+            var stasticInMonth = new List<StatisticMonth>()
+            {
+                new StatisticMonth { Month = 1, Amount = 0, },
+                new StatisticMonth { Month = 2, Amount = 0, },
+                new StatisticMonth { Month = 3, Amount = 0, },
+                new StatisticMonth { Month = 4, Amount = 0, },
+                new StatisticMonth { Month = 5, Amount = 0, },
+                new StatisticMonth { Month = 6, Amount = 0, },
+                new StatisticMonth { Month = 7, Amount = 0, },
+                new StatisticMonth { Month = 8, Amount = 0, },
+                new StatisticMonth { Month = 9, Amount = 0, },
+                new StatisticMonth { Month = 10, Amount = 0, },
+                new StatisticMonth { Month = 11, Amount = 0, },
+                new StatisticMonth { Month = 12, Amount = 0, },
+            };
+
+            foreach (var transaction in transactions)
+            {
+                foreach (var stastic in stasticInMonth)
+                {
+                    if(transaction.PaidAt.HasValue && transaction.PaidAt.Value.Month == stastic.Month)
+                    {
+                        stastic.Amount += transaction.Amount;
+                    }
+                }
+            }   
+
+            return SuccessResp.Ok(stasticInMonth);
         }
         catch (System.Exception)
         {

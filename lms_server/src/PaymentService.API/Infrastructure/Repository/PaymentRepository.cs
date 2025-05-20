@@ -48,4 +48,14 @@ public class PaymentRepository : IPaymentRepository
             .OrderByDescending(p => p.PaidAt)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Payments>> GetPaymentsForStastic(int year)
+    {
+        return await _dbContext.Payments
+                    .Where(p => p.PaidAt.HasValue &&
+                                p.PaidAt.Value.Year == year &&
+                                p.Status == PaymentStatusEnum.Success.ToString())
+                    .AsNoTracking()
+                    .ToListAsync();
+    }
 }

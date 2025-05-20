@@ -34,5 +34,11 @@ namespace PaymentService.API.Application.Controllers
         {
             return await _paymentServices.GetAllPaymentByOrderId(orderId);
         }
+
+        [HttpGet("stastic-payment-in-year")]
+        public async Task<IActionResult> StasticPaymentInYear()
+        {
+            return await _paymentServices.StasticPaymentInYear(2025);
+        }
     }
 }
