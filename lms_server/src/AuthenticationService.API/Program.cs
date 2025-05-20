@@ -15,6 +15,9 @@ using AuthenticationService.API.Infrastructure.Messaging.Publisher;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using HealthChecks.UI.Client;
+using AuthenticationService.API.Core.Mail;
+using AuthenticationService.API.Infrastructure.Cache;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,11 +40,11 @@ builder.Services.AddHealthChecks()
         name: "mysql",
         failureStatus: HealthStatus.Unhealthy,
         tags: new[] { "db", "sql" })
-    // .AddRedis(
-    //     redisConn,
-    //     name: "redis",
-    //     failureStatus: HealthStatus.Unhealthy,
-    //     tags: new[] { "cache", "redis" })
+    .AddRedis(
+        redisConnectionString: RedisConstant.REDIS_CONNECTION_STRING,
+        name: "redis",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: new[] { "cache", "redis" })
     .AddRabbitMQ(
         rabbitConnectionString: rabbitUri,
         name: "rabbitmq",
@@ -144,6 +147,13 @@ builder.Services.AddSwaggerGen(
     }
 );
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = ConfigurationOptions.Parse(RedisConstant.REDIS_CONNECTION_STRING);
+    configuration.AbortOnConnectFail = false;
+    return ConnectionMultiplexer.Connect(configuration);
+});
+
 builder.Services.AddDbContext<CampingDbContext>(options =>
 {
     options.UseMySql(MySQLDatabase.DB_CONNECTION_STRING, ServerVersion.Parse("8.0.34-mysql"));
@@ -154,6 +164,8 @@ builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>(
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationServices>();
+builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.AddScoped<ICacheService, CacheService>();
 
 builder.Services.AddSingleton<IEventPublisher, EventPublisher>();
 
