@@ -1,14 +1,17 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using DotNetEnv;
+using FluentValidation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using UserService.API.Application.Endpoints;
 using UserService.API.Application.Services;
 using UserService.API.Application.Shared.Constant;
 using UserService.API.Core.Jwt;
@@ -105,7 +108,13 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddControllers().AddJsonOptions(options =>
+// builder.Services.AddControllers().AddJsonOptions(options =>
+// {
+//     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+//     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+// });
+
+builder.Services.Configure<JsonOptions>(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -154,6 +163,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 var app = builder.Build();
 
 app.MapGet("/", async context =>
@@ -188,6 +199,10 @@ app.MapHealthChecksUI(options =>
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapGroup("api/users")
+    .RequireAuthorization()
+    .MapUserEndPoints();
+
+// app.MapControllers();
 
 app.Run();

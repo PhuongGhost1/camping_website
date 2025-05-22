@@ -14,6 +14,9 @@ using OrderService.API.Application.Shared.Constant;
 using OrderService.API.Infrastructure.Database;
 using OrderService.API.Infrastructure.Messaging.Consumer;
 using OrderService.API.Infrastructure.Repository;
+using FluentValidation;
+using OrderService.API.Application.Endpoints;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 string envPath = Path.GetFullPath(Path.Combine
@@ -104,11 +107,18 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddControllers().AddJsonOptions(options =>
+// builder.Services.AddControllers().AddJsonOptions(options =>
+// {
+//     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+//     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+// });
+
+builder.Services.Configure<JsonOptions>(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -162,6 +172,8 @@ builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddHostedService<RegisterEventConsumer>();
 builder.Services.AddHostedService<PaymentCompletedEvent>();
 
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 var app = builder.Build();
 
 app.MapGet("/", async context =>
@@ -194,6 +206,9 @@ app.MapHealthChecksUI(options =>
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+// app.MapControllers();
+app.MapGroup("api/orders")
+    .RequireAuthorization()
+    .MapOrderEndpoints();
 
 app.Run();

@@ -17,6 +17,9 @@ using ProductService.API.Infrastructure.Repository.Product;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json.Serialization;
+using FluentValidation;
+using ProductService.API.Application.Endpoints;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 string envPath = Path.GetFullPath(Path.Combine
@@ -107,7 +110,13 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddControllers().AddJsonOptions(options =>
+// builder.Services.AddControllers().AddJsonOptions(options =>
+// {
+//     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+//     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+// });
+
+builder.Services.Configure<JsonOptions>(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -167,6 +176,8 @@ builder.Services.AddScoped<IMediaServices, MediaServices>();
 builder.Services.AddScoped<IGCSService, LocalStorageService>();
 builder.Services.AddScoped<IGCSService, GCSService>();
 
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 var app = builder.Build();
 
 app.MapGet("/", async context =>
@@ -201,6 +212,11 @@ app.MapHealthChecksUI(options =>
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+// app.MapControllers();
+app.MapGroup("api/products")
+    .MapProductEndpoints();
+
+app.MapGroup("api/categories")
+    .MapCategoryEndpoints();
 
 app.Run();
