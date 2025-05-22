@@ -11,6 +11,14 @@ interface RefreshTokenResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+interface ApiResponse<T> {
+  statusCode: number;
+  value: T;
+  contentType?: string | null;
+  serializerSettings?: unknown;
+}
+
 export class ApiGateway {
   public static readonly API_Base: string = import.meta.env
     .BASE_GATEWAY_API_URL;
@@ -39,13 +47,12 @@ export class ApiGateway {
           const refreshToken = localStorage.getItem("refreshToken");
 
           try {
-            const res =
-              await ApiGateway.axiosInstance.post<RefreshTokenResponse>(
-                `/auth/refresh-token`,
-                { refreshToken }
-              );
+            const res = await ApiGateway.axiosInstance.post<
+              ApiResponse<RefreshTokenResponse>
+            >(`/auth/refresh-token`, { refreshToken });
 
-            const { accessToken, refreshToken: newRefreshToken } = res.data;
+            const { accessToken, refreshToken: newRefreshToken } =
+              res.data.value;
 
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("refreshToken", newRefreshToken);
@@ -82,17 +89,19 @@ export class ApiGateway {
     }
   }
 
-  public static async LoginDefault<T extends LoginResponse>(
+  public static async LoginDefault(
     email: string,
     pwd: string
   ): Promise<boolean> {
     try {
-      const response = await this.axiosInstance.post<T>(`/auth/login`, {
+      const response = await this.axiosInstance.post<
+        ApiResponse<LoginResponse>
+      >(`/auth/login`, {
         email,
         pwd,
       });
 
-      const { accessToken, refreshToken } = response.data;
+      const { accessToken, refreshToken } = response.data.value;
 
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
@@ -125,10 +134,10 @@ export class ApiGateway {
     pageSize: number
   ): Promise<T> {
     try {
-      const response = await this.axiosInstance.get<T>(
+      const response = await this.axiosInstance.get<ApiResponse<T>>(
         `/products/all-products?searchKeyword=${searchKeyword}&Page=${page}&PageSize=${pageSize}`
       );
-      return response.data;
+      return response.data.value;
     } catch (error) {
       console.error("Error fetching products:", error);
       throw error;
@@ -137,10 +146,10 @@ export class ApiGateway {
 
   public static async getAllCategories<T>(): Promise<T> {
     try {
-      const response = await this.axiosInstance.get<T>(
+      const response = await this.axiosInstance.get<ApiResponse<T>>(
         "/categories/all-categories"
       );
-      return response.data;
+      return response.data.value;
     } catch (error) {
       console.error("Error fetching categories:", error);
       throw error;
@@ -150,8 +159,10 @@ export class ApiGateway {
   public static async getUser<T>(): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const reponse = await this.axiosInstance.get<T>(`/users/user-info`);
-      return reponse.data;
+      const reponse = await this.axiosInstance.get<ApiResponse<T>>(
+        `/users/user-info`
+      );
+      return reponse.data.value;
     } catch (error) {
       console.error("Error fetching user:", error);
       throw error;
@@ -164,12 +175,15 @@ export class ApiGateway {
     name: string
   ): Promise<T | null> {
     try {
-      const response = await this.axiosInstance.post<T>(`/auth/register`, {
-        name,
-        email,
-        pwd,
-      });
-      return response.data;
+      const response = await this.axiosInstance.post<ApiResponse<T>>(
+        `/auth/register`,
+        {
+          name,
+          email,
+          pwd,
+        }
+      );
+      return response.data.value;
     } catch (error) {
       console.error("Error registering:", error);
       throw error;
@@ -178,8 +192,10 @@ export class ApiGateway {
 
   public static async getProductById<T>(id: string): Promise<T | null> {
     try {
-      const response = await this.axiosInstance.get<T>(`/products/${id}`);
-      return response.data;
+      const response = await this.axiosInstance.get<ApiResponse<T>>(
+        `/products/${id}`
+      );
+      return response.data.value;
     } catch (error) {
       console.error("Error fetching product by ID:", error);
       throw error;
@@ -189,8 +205,10 @@ export class ApiGateway {
   public static async getOrderByUserId<T>(): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.get<T>(`/orders/order`);
-      return response.data;
+      const response = await this.axiosInstance.get<ApiResponse<T>>(
+        `/orders/order`
+      );
+      return response.data.value;
     } catch (error) {
       console.error("Error fetching orders:", error);
       throw error;
@@ -202,10 +220,10 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.get<T>(
+      const response = await this.axiosInstance.get<ApiResponse<T>>(
         `/orders/all-order-products?orderId=${orderId}`
       );
-      return response.data;
+      return response.data.value;
     } catch (error) {
       console.error("Error fetching all orders:", error);
       throw error;
@@ -220,13 +238,16 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.post<T>(`/orders/add-to-cart`, {
-        orderId,
-        productId,
-        quantity,
-        price,
-      });
-      return response.data;
+      const response = await this.axiosInstance.post<ApiResponse<T>>(
+        `/orders/add-to-cart`,
+        {
+          orderId,
+          productId,
+          quantity,
+          price,
+        }
+      );
+      return response.data.value;
     } catch (error) {
       console.error("Error adding product to cart:", error);
       throw error;
@@ -241,7 +262,7 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.put<T>(
+      const response = await this.axiosInstance.put<ApiResponse<T>>(
         `/orders/update-order-item`,
         {
           productId,
@@ -250,7 +271,7 @@ export class ApiGateway {
           actualPrice,
         }
       );
-      return response.data;
+      return response.data.value;
     } catch (error) {
       console.error("Error updating product in cart:", error);
       throw error;
@@ -263,30 +284,30 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.post<T>(
+      const response = await this.axiosInstance.post<ApiResponse<T>>(
         `/orders/delete-order-item`,
         {
           orderId,
           productId,
         }
       );
-      return response.data;
+      return response.data.value;
     } catch (error) {
       console.error("Error removing product from cart:", error);
       throw error;
     }
   }
 
-  public static async updateTotalAmount(totalAmount: number): Promise<any> {
+  public static async updateTotalAmount<T>(totalAmount: number): Promise<T> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.put(
+      const response = await this.axiosInstance.put<ApiResponse<T>>(
         `/orders/update-order-total-amount`,
         {
           totalAmount,
         }
       );
-      return response.data;
+      return response.data.value;
     } catch (error) {
       console.error("Error updating total amount:", error);
       throw error;
@@ -299,14 +320,14 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.post<T>(
+      const response = await this.axiosInstance.post<ApiResponse<T>>(
         `/payments/process-payment`,
         {
           orderId,
           total,
         }
       );
-      return response.data;
+      return response.data.value;
     } catch (error) {
       console.error("Error processing payment:", error);
       throw error;
@@ -320,10 +341,10 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.get<T>(
+      const response = await this.axiosInstance.get<ApiResponse<T>>(
         `/payments/confirm-payment?paymentId=${paymentId}&payerId=${payerId}&token=${token}`
       );
-      return response.data;
+      return response.data.value;
     } catch (error) {
       console.error("Error confirming payment:", error);
       throw error;
@@ -333,10 +354,10 @@ export class ApiGateway {
   public static async GetAllPayments<T>(orderId: string): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.get<T>(
+      const response = await this.axiosInstance.get<ApiResponse<T>>(
         `/payments/all-payments?orderId=${orderId}`
       );
-      return response.data;
+      return response.data.value;
     } catch (error) {
       console.error("Error fetching all payments:", error);
       throw error;
@@ -349,11 +370,14 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.put<T>(`/users/update-info`, {
-        firstName,
-        lastName,
-      });
-      return response.data;
+      const response = await this.axiosInstance.put<ApiResponse<T>>(
+        `/users/update-info`,
+        {
+          firstName,
+          lastName,
+        }
+      );
+      return response.data.value;
     } catch (error) {
       console.error("Error updating user info:", error);
       throw error;
@@ -366,11 +390,14 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.put<T>(`/users/update-pwd`, {
-        newPassword,
-        confirmPassword,
-      });
-      return response.data;
+      const response = await this.axiosInstance.put<ApiResponse<T>>(
+        `/users/update-pwd`,
+        {
+          newPassword,
+          confirmPassword,
+        }
+      );
+      return response.data.value;
     } catch (error) {
       console.error("Error updating user password:", error);
       throw error;
@@ -380,8 +407,10 @@ export class ApiGateway {
   public static async GetAllOrders<T>(): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.get<T>(`/orders/all-orders`);
-      return response.data;
+      const response = await this.axiosInstance.get<ApiResponse<T>>(
+        `/orders/all-orders`
+      );
+      return response.data.value;
     } catch (error) {
       console.error("Error fetching all orders:", error);
       throw error;
@@ -394,12 +423,15 @@ export class ApiGateway {
     pwd: string
   ): Promise<T | null> {
     try {
-      const response = await this.axiosInstance.post<T>(`/auth/verify-email`, {
-        name,
-        email,
-        pwd,
-      });
-      return response.data;
+      const response = await this.axiosInstance.post<ApiResponse<T>>(
+        `/auth/verify-email`,
+        {
+          name,
+          email,
+          pwd,
+        }
+      );
+      return response.data.value;
     } catch (error) {
       console.error("Error verifying email:", error);
       throw error;
@@ -411,11 +443,14 @@ export class ApiGateway {
     email: string
   ): Promise<T | null> {
     try {
-      const response = await this.axiosInstance.post<T>(`/auth/verify-otp`, {
-        otp,
-        email,
-      });
-      return response.data;
+      const response = await this.axiosInstance.post<ApiResponse<T>>(
+        `/auth/verify-otp`,
+        {
+          otp,
+          email,
+        }
+      );
+      return response.data.value;
     } catch (error) {
       console.error("Error verifying OTP:", error);
       throw error;
