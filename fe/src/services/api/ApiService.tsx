@@ -2,7 +2,7 @@ import axios from "axios";
 
 interface LoginResponse {
   email: string;
-  pwd: string;
+  password: string;
   accessToken: string;
   refreshToken: string;
 }
@@ -47,12 +47,13 @@ export class ApiGateway {
           const refreshToken = localStorage.getItem("refreshToken");
 
           try {
-            const res = await ApiGateway.axiosInstance.post<
-              ApiResponse<RefreshTokenResponse>
-            >(`/auth/refresh-token`, { refreshToken });
+            const res =
+              await ApiGateway.axiosInstance.post<RefreshTokenResponse>(
+                `/auth/refresh-token`,
+                { refreshToken }
+              );
 
-            const { accessToken, refreshToken: newRefreshToken } =
-              res.data.value;
+            const { accessToken, refreshToken: newRefreshToken } = res.data;
 
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("refreshToken", newRefreshToken);
@@ -94,14 +95,15 @@ export class ApiGateway {
     pwd: string
   ): Promise<boolean> {
     try {
-      const response = await this.axiosInstance.post<
-        ApiResponse<LoginResponse>
-      >(`/auth/login`, {
-        email,
-        pwd,
-      });
+      const response = await this.axiosInstance.post<LoginResponse>(
+        `/auth/login`,
+        {
+          email,
+          password: pwd,
+        }
+      );
 
-      const { accessToken, refreshToken } = response.data.value;
+      const { accessToken, refreshToken } = response.data;
 
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
