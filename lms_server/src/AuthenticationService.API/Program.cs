@@ -21,6 +21,10 @@ using StackExchange.Redis;
 using FluentValidation;
 using AuthenticationService.API.Application.Endpoints;
 using Microsoft.AspNetCore.Mvc;
+using AuthenticationService.API.Application.Grpc.Services;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using AuthenticationService.Grpc;
+using AuthenticationService.API.Application.Grpc.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,11 +117,11 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddHttpContextAccessor();
 
-// builder.Services.AddControllers().AddJsonOptions(options =>
-// {
-//     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-//     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-// });
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 builder.Services.Configure<JsonOptions>(options =>
 {
@@ -178,7 +182,31 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 
 builder.Services.AddSingleton<IEventPublisher, EventPublisher>();
 
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+// builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenLocalhost(7229, o =>
+    {
+        o.UseHttps();
+        o.Protocols = HttpProtocols.Http1AndHttp2;
+    });
+});
+
+builder.Services.AddGrpc();
+builder.Services.AddGrpcClient<AuthService.AuthServiceClient>(opt =>
+{
+    opt.Address = new Uri("https://localhost:7229");
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+    };
+});
+
+builder.Services.AddScoped<AuthGrpcClient>();
 
 var app = builder.Build();
 
@@ -212,8 +240,9 @@ app.MapHealthChecksUI(options =>
 app.UseAuthentication();
 app.UseAuthorization();
 
-// app.MapControllers();
-app.MapGroup("api/auth")
-    .MapAuthenticationEndpoints();
+app.MapControllers();
+// app.MapGroup("api/auth")
+//     .MapAuthenticationEndpoints();
+app.MapGrpcService<AuthGrpcService>();
 
 app.Run();
