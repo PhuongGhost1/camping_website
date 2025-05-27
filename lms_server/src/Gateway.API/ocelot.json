@@ -58,11 +58,11 @@
     },
     {
       "DownstreamPathTemplate": "/api/orders/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5181
+          "Port": 7212
         }
       ],
       "UpstreamPathTemplate": "/orders/{everything}",
@@ -70,15 +70,19 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
+      },
+      "HttpHandlerOptions": {
+        "DangerousAcceptAnyServerCertificateValidator": true,
+        "UseHttp2": true
       }
     },
     {
       "DownstreamPathTemplate": "/api/payments/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5031
+          "Port": 7064
         }
       ],
       "UpstreamPathTemplate": "/payments/{everything}",
@@ -86,6 +90,10 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
+      },
+      "HttpHandlerOptions": {
+        "DangerousAcceptAnyServerCertificateValidator": true,
+        "UseHttp2": true
       }
     }
   ],
