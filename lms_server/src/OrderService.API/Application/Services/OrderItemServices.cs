@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using OrderService.API.Application.DTOs.OrderItem;
 using OrderService.API.Application.Shared.Enum;
 using OrderService.API.Application.Shared.Type;
+using OrderService.API.Core.Helper;
 using OrderService.API.Domain;
 using OrderService.API.Infrastructure.Repository;
 
@@ -46,7 +47,7 @@ public class OrderItemServices : IOrderItemServices
                 order.TotalAmount = order.TotalAmount + (request.Quantity * request.Price);
                 await _orderRepo.UpdateOrder(order);
 
-                return SuccessResp.Ok(orderItem);
+                return SuccessResp.Ok(orderItem.ToMapperDto());
             }    
 
             var orderItemObj = new Orderitems
@@ -65,7 +66,7 @@ public class OrderItemServices : IOrderItemServices
             var isCreated = await _orderItemRepo.AddOrderItem(orderItemObj);
             if (!isCreated) return ErrorResp.BadRequest("Failed to create order item!");
 
-            return SuccessResp.Created(orderItemObj);
+            return SuccessResp.Created(orderItemObj.ToMapperDto());
         }
         catch (System.Exception)
         {

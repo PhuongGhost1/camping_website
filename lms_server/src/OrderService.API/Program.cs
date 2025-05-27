@@ -17,6 +17,7 @@ using OrderService.API.Infrastructure.Repository;
 using FluentValidation;
 using OrderService.API.Application.Endpoints;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 string envPath = Path.GetFullPath(Path.Combine
@@ -119,7 +120,6 @@ builder.Services.Configure<JsonOptions>(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
@@ -173,6 +173,15 @@ builder.Services.AddHostedService<RegisterEventConsumer>();
 builder.Services.AddHostedService<PaymentCompletedEvent>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenLocalhost(7212, o =>
+    {
+        o.UseHttps();
+        o.Protocols = HttpProtocols.Http1AndHttp2;
+    });
+});
 
 var app = builder.Build();
 
