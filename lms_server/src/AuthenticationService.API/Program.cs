@@ -19,7 +19,6 @@ using AuthenticationService.API.Core.Mail;
 using AuthenticationService.API.Infrastructure.Cache;
 using StackExchange.Redis;
 using FluentValidation;
-using AuthenticationService.API.Application.Endpoints;
 using Microsoft.AspNetCore.Mvc;
 using AuthenticationService.API.Application.Grpc.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -117,11 +116,11 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-});
+// builder.Services.AddControllers().AddJsonOptions(options =>
+// {
+//     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+//     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+// });
 
 builder.Services.Configure<JsonOptions>(options =>
 {
@@ -182,7 +181,7 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 
 builder.Services.AddSingleton<IEventPublisher, EventPublisher>();
 
-// builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -240,9 +239,10 @@ app.MapHealthChecksUI(options =>
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-// app.MapGroup("api/auth")
-//     .MapAuthenticationEndpoints();
+// app.MapControllers();
+app.MapGroup("api/auth")
+    .MapAuthenticationEndpoints();
+    
 app.MapGrpcService<AuthGrpcService>();
 
 app.Run();

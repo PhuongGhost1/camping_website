@@ -1,12 +1,13 @@
 using AuthenticationService.API.Application.DTOs.OTP;
+using AuthenticationService.Grpc;
 using FluentValidation;
 
 namespace AuthenticationService.API.Application.Validators.Auth;
-public class VerifyOtpRequestValidator : AbstractValidator<VerifyOtpRequest>
+public class VerifyOtpRequestValidator : AbstractValidator<VerifyOtpGrpcRequest>
 {
     public VerifyOtpRequestValidator()
     {
-        RuleFor(x => x.Otp)
+        RuleFor(x => x.OtpCode)
             .NotEmpty()
             .WithMessage("OTP is required")
             .NotNull()

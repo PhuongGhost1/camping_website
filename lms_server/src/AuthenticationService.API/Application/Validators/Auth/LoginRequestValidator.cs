@@ -1,12 +1,13 @@
 using AuthenticationService.API.Application.DTOs.Authentication;
+using AuthenticationService.Grpc;
 using FluentValidation;
 
 namespace AuthenticationService.API.Application.Validators.Auth;
-public class LoginRequestValidator : AbstractValidator<LoginRequest>
+public class LoginRequestValidator : AbstractValidator<LoginGrpcRequest>
 {
     public LoginRequestValidator()
     {
-        RuleFor(x => x.email)
+        RuleFor(x => x.Email)
             .NotEmpty()
             .WithMessage("Email is required")
             .NotNull()
@@ -15,7 +16,7 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
             .WithMessage("Email must not exceed 100 characters")
             .EmailAddress();
 
-        RuleFor(x => x.pwd)
+        RuleFor(x => x.Password)
             .NotEmpty()
             .WithMessage("Password is required")
             .NotNull()

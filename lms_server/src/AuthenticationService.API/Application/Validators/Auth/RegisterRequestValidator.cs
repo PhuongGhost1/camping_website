@@ -1,24 +1,25 @@
 using AuthenticationService.API.Application.DTOs.Authentication;
+using AuthenticationService.Grpc;
 using FluentValidation;
 
 namespace AuthenticationService.API.Application.Validators.Auth;
-public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+public class RegisterRequestValidator : AbstractValidator<RegisterGrpcRequest>
 {
     public RegisterRequestValidator()
     {
-        RuleFor(x => x.email)
+        RuleFor(x => x.Email)
             .NotEmpty()
             .EmailAddress()
             .WithMessage("Invalid email address");
 
-        RuleFor(x => x.name)
+        RuleFor(x => x.FullName)
             .NotEmpty()
             .MinimumLength(6)
             .WithMessage("Password must be at least 6 characters long")
             .MaximumLength(100)
             .WithMessage("Password must not exceed 100 characters");
 
-        RuleFor(x => x.pwd)
+        RuleFor(x => x.Password)
             .NotEmpty()
             .WithMessage("Password is required")
             .MinimumLength(5)

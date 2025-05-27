@@ -1,12 +1,13 @@
 using AuthenticationService.API.Application.DTOs.Authentication;
+using AuthenticationService.Grpc;
 using FluentValidation;
 
 namespace AuthenticationService.API.Application.Validators.Auth;
-public class RefreshTokenRequestValidator : AbstractValidator<RefreshTokenRequest>
+public class RefreshTokenRequestValidator : AbstractValidator<RefreshTokenGrpcRequest>
 {
     public RefreshTokenRequestValidator()
     {
-        RuleFor(x => x.refreshToken)
+        RuleFor(x => x.RefreshToken)
             .NotEmpty()
             .WithMessage("Refresh token is required")
             .NotNull()
