@@ -32,6 +32,7 @@ export interface PaymentOrderProps {
   amount: number;
   paidAt: string;
   orderId: string;
+  payment?: PaymentOrderProps;
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({

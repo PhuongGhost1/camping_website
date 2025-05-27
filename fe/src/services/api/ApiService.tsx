@@ -322,14 +322,14 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.post<ApiResponse<T>>(
+      const response = await this.axiosInstance.post<T>(
         `/payments/process-payment`,
         {
           orderId,
           total,
         }
       );
-      return response.data.value;
+      return response.data;
     } catch (error) {
       console.error("Error processing payment:", error);
       throw error;
@@ -343,10 +343,10 @@ export class ApiGateway {
   ): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.get<ApiResponse<T>>(
+      const response = await this.axiosInstance.get<T>(
         `/payments/confirm-payment?paymentId=${paymentId}&payerId=${payerId}&token=${token}`
       );
-      return response.data.value;
+      return response.data;
     } catch (error) {
       console.error("Error confirming payment:", error);
       throw error;
@@ -356,10 +356,10 @@ export class ApiGateway {
   public static async GetAllPayments<T>(orderId: string): Promise<T | null> {
     this.setAuthHeader();
     try {
-      const response = await this.axiosInstance.get<ApiResponse<T>>(
+      const response = await this.axiosInstance.get<T>(
         `/payments/all-payments?orderId=${orderId}`
       );
-      return response.data.value;
+      return response.data;
     } catch (error) {
       console.error("Error fetching all payments:", error);
       throw error;

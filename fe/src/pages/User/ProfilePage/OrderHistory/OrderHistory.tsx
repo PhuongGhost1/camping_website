@@ -42,10 +42,13 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
       setGetPaymentOrders(filteredOrders);
     };
 
-    fetchPaymentOrders()
-      .then(() => console.log("Payment orders fetched successfully"))
-      .catch((error) => console.error("Error fetching payment orders:", error));
+    fetchPaymentOrders();
   }, [setGetPaymentOrders]);
+
+  const flattenedOrders = getPaymentOrders
+    .flatMap((item) => item.payment)
+    .filter((p) => p !== undefined && p !== null);
+  console.log(flattenedOrders);
 
   return (
     <div className="order-history">
@@ -62,22 +65,22 @@ const OrderHistory: React.FC<OrderHistoryProps> = ({
           </tr>
         </thead>
         <tbody>
-          {getPaymentOrders.length === 0 ? (
+          {flattenedOrders.length === 0 ? (
             <tr>
               <td colSpan={4}>No orders found</td>
             </tr>
           ) : (
-            getPaymentOrders.map((order) => (
+            flattenedOrders.map((order) => (
               <tr
                 key={order.id}
                 className={`order-history-row ${
                   selectedOrderId === order.orderId ? "clicked" : ""
                 }`}
               >
-                <td>{getPaymentOrders.indexOf(order) + 1}</td>
+                <td>{flattenedOrders.indexOf(order) + 1}</td>
                 <td>{order.paymentMethod}</td>
                 <td>{new Date(order.paidAt).toLocaleDateString()}</td>
-                <td>${order.amount.toFixed(2)}</td>
+                <td>${order.amount}</td>
                 <td>{order.status}</td>
                 <td>
                   <button
