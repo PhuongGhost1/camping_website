@@ -117,6 +117,12 @@ public class PaymentServices : IPaymentServices
                     return ErrorResp.BadRequest("Unable to process payment");
             }
 
+            paymentOrder.TransactionId = payment.id;
+
+            var isUpdate = await _paymentRepository.UpdatePayment(paymentOrder);
+            if (!isUpdate)
+                return ErrorResp.BadRequest("Unable to update payment");
+
             return SuccessResp.Ok(new ProcessPaymentResp
             {
                 ApprovalUrl = approvalUrl,
@@ -152,6 +158,7 @@ public class PaymentServices : IPaymentServices
             paymentOrder.Status = PaymentStatusEnum.Success.ToString();
 
             var isProcess = await _paymentRepository.UpdatePayment(paymentOrder);
+            Console.WriteLine("Is process success: " + isProcess);
             if (!isProcess)
                 return ErrorResp.BadRequest("Unable to process payment");
 

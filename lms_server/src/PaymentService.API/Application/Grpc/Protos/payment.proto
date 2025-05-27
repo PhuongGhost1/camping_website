@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option csharp_namespace = "PaymentService.Grpc";
+
+package payments;
+
+service PaymentServiceGrpc {
+    rpc ProcessPayment (ProcessPaymentGrpcRequest) returns (ProcessPaymentGrpcResponse);
+    rpc ConfirmPayment (ConfirmPaymentGrpcRequest) returns (GenericMessageGrpcResponse);
+    rpc GetAllPaymentByOrderId (GetAllPaymentGrpcRequest) returns (ListPaymentsGrpcResponse);
+    rpc StasticPaymentInYear (StasticPaymentGrpcRequest) returns (StasticPaymentGrpcResponse);
+}
+
+message StatisticMonth {
+    int32 month = 1;
+    double amount = 2;
+}
+
+message Payment {
+    string id = 1;
+    string orderId = 2;
+    string paymentMethod = 3;
+    string status = 4;
+    string transactionId = 5;
+    double amount = 6;
+    string paidAt = 7;
+}
+
+message ProcessPaymentGrpcRequest {
+    string orderId = 1;
+    double total = 2;
+}
+
+message ProcessPaymentGrpcResponse {
+    string approvalUrl = 1;
+    string paymentId = 2;
+}
+
+message ConfirmPaymentGrpcRequest {
+    string paymentId = 1;
+    string payerId = 2;
+    string token = 3;
+}
+
+message GetAllPaymentGrpcRequest {
+    string orderId = 1;
+}
+
+message StasticPaymentGrpcRequest {
+    int32 year = 1;
+}
+
+message GenericMessageGrpcResponse {
+    string message = 1;
+}
+
+message ListPaymentsGrpcResponse {
+    repeated Payment payment = 1;
+}
+
+message StasticPaymentGrpcResponse {
+  repeated StatisticMonth statisticMonth = 1;
+}

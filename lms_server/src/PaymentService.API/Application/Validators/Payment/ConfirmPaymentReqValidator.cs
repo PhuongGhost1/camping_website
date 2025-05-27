@@ -1,8 +1,8 @@
 using FluentValidation;
-using PaymentService.API.Application.DTOs.Payment;
+using PaymentService.Grpc;
 
 namespace PaymentService.API.Application.Validators.Payment;
-public class ConfirmPaymentReqValidator : AbstractValidator<ConfirmPaymentReq>
+public class ConfirmPaymentReqValidator : AbstractValidator<ConfirmPaymentGrpcRequest>
 {
     public ConfirmPaymentReqValidator()
     {

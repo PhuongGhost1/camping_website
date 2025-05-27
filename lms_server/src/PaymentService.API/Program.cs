@@ -15,8 +15,11 @@ using PaymentService.API.Infrastructure.Database;
 using PaymentService.API.Infrastructure.Messaging.Publisher;
 using PaymentService.API.Infrastructure.Repository;
 using FluentValidation;
-using PaymentService.API.Application.Endpoints;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using PaymentService.API.Application.Grpc.Services;
+using PaymentService.Grpc;
+using PaymentService.API.Application.Grpc.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
 string envPath = Path.GetFullPath(Path.Combine
@@ -170,6 +173,30 @@ builder.Services.AddSingleton<IEventPublisher, EventPublisher>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenLocalhost(7064, o =>
+    {
+        o.UseHttps();
+        o.Protocols = HttpProtocols.Http1AndHttp2;
+    });
+});
+
+builder.Services.AddGrpc();
+builder.Services.AddGrpcClient<PaymentServiceGrpc.PaymentServiceGrpcClient>(opt =>
+{
+    opt.Address = new Uri("https://localhost:7064");
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+    };
+});
+
+builder.Services.AddScoped<PaymentGrpcClient>();
+
 var app = builder.Build();
 
 app.MapGet("/", async context =>
@@ -206,5 +233,7 @@ app.UseAuthorization();
 app.MapGroup("api/payments")
     .RequireAuthorization()
     .MapPaymentEndpoints();
+
+app.MapGrpcService<PaymentGrpcService>();
 
 app.Run();
